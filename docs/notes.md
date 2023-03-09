@@ -81,3 +81,8 @@ many0(xx) can be usefull to force a result to a vec
 
 - https://github.com/tinaun/yarnspinner-rs uses https://docs.rs/logos/latest/logos/
 - xxx uses pest
+
+## Other thoughts
+
+- perhaps call this bevy_pelote instead ? (pelotte de laine, yarn etc)
+- or bevy_tale
