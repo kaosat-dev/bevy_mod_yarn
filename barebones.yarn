@@ -1,0 +1,22 @@
+title: Foo
+tags: #test_tag othertag
+colorID: 1
+position: 301,-291
+---
+Lamik: Hi there !
+Dona: Hello !
+<<say hello>>
+===
+title: Bar
+tags: 
+colorID: 0
+position: 567,-265
+---
+Lamik: bleh bleh
+Dona: what is wrong ?
+-> Lamik: nothing
+    Dona: oh ok
+-> Lamik: everything!
+    <<jump Foo>>
+
+===

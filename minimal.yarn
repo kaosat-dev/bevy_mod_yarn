@@ -1,0 +1,43 @@
+title: Start
+tags: #test_tag othertag
+colorID: 1
+position: 301,-291
+---
+Lamik: Hi there !
+Dona: Hello !
+Lamik: how are you doing ?
+<<say hello>>
+Bob: Hi !
+Grumpy: Grumble !
+Bob: Oh hello there grumpy !
+Dona: fine and you ?
+->  Lamik: doing ok
+    Dona: good to hear :)
+    Grumpy: whatever !
+    Bob: cool cool cool !
+    Dona: let's have a party then !
+    Grumpy: NO!
+    Bob: sure, whatever..
+    Lamik: yeah !
+    <<jump Other_node>>
+->  Lamik: not so great, sadly :(
+    Dona: oh, what is the matter ?
+    Lamik: have not caught any crabs.
+
+Lamik: continuing to talk here outside of choices
+===
+title: Other_node
+tags: 
+colorID: 0
+position: 567,-265
+---
+Lamik: bleh bleh
+Dona: what is wrong ?
+->  Grumpy: and what about me ?
+    Bob: sure
+    -> Grumpy: yes ?
+    -> Grumpy: what ?
+-> Grumpy: another answer
+
+Bob: and me ?
+===
