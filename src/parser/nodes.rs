@@ -5,7 +5,7 @@ use nom::{
     IResult, multi::{separated_list0}, 
 };
 
-use crate::{parser_nom::{header, body::body}};
+use crate::{parser::{header, body::body}};
 use crate::{YarnNode};
 
 pub fn yarn_nodes(input: &str) -> IResult<&str, HashMap<String, YarnNode>> {

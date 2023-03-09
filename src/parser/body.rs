@@ -12,7 +12,7 @@ use nom::{
     number::complete::{float, recognize_float}
 };
 
-use crate::{YarnCommand, Statements, Dialogue, parser_nom::tag_identifier, Branch};
+use crate::{YarnCommand, Statements, Dialogue, parser::tag_identifier, Branch};
 
 use super::{spacey, parse_params, identifier, };
 

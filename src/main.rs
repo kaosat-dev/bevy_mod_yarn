@@ -1,10 +1,10 @@
 use std::{fs};
 
-mod parser_nom;
+mod parser;
 
 pub mod structs;
 pub use structs::*;
-use crate::{parser_nom::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, hex_color_final, parse_all_yeah, parse_all_yarn, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
+use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, hex_color_final, parse_all_yeah, parse_all_yarn, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
 
 fn main() {
     println!("title {:?}",title("title: Start\n"));
@@ -215,7 +215,7 @@ position: 567,-265
         println!("failed to parse");
     }*/
 
-    let file_path = "./minimal.yarn"; // minimal.yarn barebones.yarn
+    let file_path = "./assets/minimal.yarn"; // minimal.yarn barebones.yarn
 
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
