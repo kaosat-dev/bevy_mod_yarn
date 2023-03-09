@@ -29,13 +29,15 @@ I am aiming to be able to parse as much of the Yarn Syntax as possible:
 - [ ] tags available inside statements 
 
 - [ ] add testing
+- [ ] add examples
+- [ ] add docs
 
 I will put it on crates.io once I feel it is useable enough.
 
 ## What this tool does:
 
-- provide a parser(written with Nom). Not specific to Bevy, will likely be extracted into its own crate down the line.
-- provide an asset loader for Bevy
+- provide a [parser](./src/parser/) (written with Nom). Not specific to Bevy, will likely be extracted into its own Crate down the line.
+- provide an [asset loader](./src/yarn_loader.rs) for Bevy
 - some additional data structures and functions to deal with the Yarn Format inside bevy, in a minimalistic manner
 
 ## What this tool does not:
