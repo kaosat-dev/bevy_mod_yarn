@@ -16,6 +16,33 @@ To be able to create narrative games and more in Bevy !
     * Other UI tools for Bevy , like Egui , Belly or Kayak are not "standard"
     * everyone has their preferences
 
+## Development status
+
+This projets is still in the early stages, but it is already useable as it is for some basic Yarn scripts.
+
+Since I am using it myself and will be relying on it heavilly (yeah for dogfooding), 
+
+I am aiming to be able to parse as much of the Yarn Syntax as possible: 
+
+- [x] basic nodes parsing (header + body)
+- [x] dialogues: with or without character names
+- [ ] dialogues: interpolated values
+- [ ] dialogues: attributes
+- [ ] dialogues: conditional branching with expressions
+
+- [x] choices: blank line to close a list of choices
+- [ ] choices: nested/ indentation handling 
+
+- [x] commands: basic parsing
+
+- [ ] expressions parsing
+- [ ] conditional expressions
+
+- [x] tags parsing
+- [ ] tags available inside statements 
+
+- [ ] add testing
+
 
 ## License
 
