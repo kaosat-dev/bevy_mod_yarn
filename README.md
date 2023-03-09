@@ -3,20 +3,7 @@
 Parser + helpers for the [YarnSpinner](https://github.com/YarnSpinnerTool/YarnSpinner) dialogue file format for the [Bevy Engine](https://github.com/bevyengine/bevy)
 To be able to create narrative games and more in Bevy !
 
-## What this tool does:
-
-- provide a parser(written with Nom). Not specific to Bevy, will likely be extracted into its own crate down the line.
-- provide an asset loader for Bevy
-- some additional data structures and functions to deal with the Yarn Format inside bevy, in a minimalistic manner
-
-## What this tool does not:
-
-- provide complex UI or predefined ways to interact with the dialogues inside Bevy, for a few reasons
-    * Bevy's UI is still constantly evolving
-    * Other UI tools for Bevy , like Egui , Belly or Kayak are not "standard"
-    * everyone has their preferences
-
-## Development status
+# Development status
 
 This projets is still in the early stages, but it is already useable as it is for some basic Yarn scripts.
 
@@ -43,6 +30,22 @@ I am aiming to be able to parse as much of the Yarn Syntax as possible:
 
 - [ ] add testing
 
+I will put it on crates.io once I feel it is useable enough.
+
+## What this tool does:
+
+- provide a parser(written with Nom). Not specific to Bevy, will likely be extracted into its own crate down the line.
+- provide an asset loader for Bevy
+- some additional data structures and functions to deal with the Yarn Format inside bevy, in a minimalistic manner
+
+## What this tool does not:
+
+- provide complex UI or predefined ways to interact with the dialogues inside Bevy, for a few reasons
+    * Bevy's UI is still constantly evolving
+    * Other UI tools for Bevy , like Egui , Belly or Kayak are not "standard"
+    * everyone has their preferences
+
+#
 
 ## License
 
