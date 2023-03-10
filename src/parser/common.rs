@@ -54,8 +54,8 @@ pub fn operator(input: &str) -> IResult<&str, &str> {
         tag("=="),
         tag("<"),
         tag(">"),
-        //tag("<="), // FIXME: does not work ?
-        //tag(">=") // FIXME: does not work ?
+        tag("<="), // FIXME: does not work ?
+        tag(">=") // FIXME: does not work ?
     ))(input)
 }
 

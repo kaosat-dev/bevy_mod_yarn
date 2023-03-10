@@ -1,19 +1,19 @@
 use std::{fs, collections::HashMap, fmt::format};
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct YarnNode {
     pub title: String,
     pub tags: Vec<String>,
     pub branch: Branch
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Branch {
    pub statements: Vec<Statements>,
 }
 
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Dialogue {
     pub who: String,
     pub what: String,
@@ -21,20 +21,20 @@ pub struct Dialogue {
     pub tags: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Choice{
     pub branches: Vec<Branch>,
     pub tags: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct YarnCommand {
     pub name: String,
     pub params: String,
     pub tags: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Statements {
     Dialogue(Dialogue),
     Choice(Choice),

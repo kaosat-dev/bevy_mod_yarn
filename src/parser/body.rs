@@ -12,10 +12,8 @@ use nom::{
     number::complete::{float, recognize_float}
 };
 
-use crate::{YarnCommand, Statements, Dialogue, parser::tag_identifier, Branch};
-
-use super::{spacey, parse_params, identifier, };
-
+use super::{YarnCommand, Statements, Dialogue, Choice, Branch};
+use super::{spacey, parse_params, identifier, tag_identifier };
 
 // TODO, replace parse_params with an EXPRESSION
 pub fn yarn_commands(input: &str) -> IResult<&str, YarnCommand> {
@@ -185,10 +183,28 @@ pub fn statement_base_line(input: &str) -> IResult<&str, (&str, Vec<&str>, usize
 // see https://github.com/YarnSpinnerTool/YarnSpinner/blob/040a2436d98e5c0cc72e6a8bc04e6c3fa156399d/Documentation/Yarn-Spec.md#body
 // returns a Vec<(content, Vec<Tags>)
 // ie each line with its tags
-
 pub fn statement_base(input: &str) -> IResult<&str, Vec<(&str, Vec<&str>, usize)>> {
     many1(statement_base_line)(input)
 }
+
+pub fn state_pop(mut stack: Vec<Branch>, mut current_branch : Branch, mut current_branches: Vec<Branch>) -> Branch{
+    current_branches.push(current_branch.clone());
+
+    if stack.len() > 0 {
+        current_branch = stack.pop().unwrap();
+        if current_branches.len() > 0 {
+            current_branch.statements.push( // need to be pushed to the parent branch, so that is why we pop() first
+                Statements::Choice(Choice { branches: current_branches.clone() , ..Default::default()} )
+            );
+        }   
+    }
+    println!("nesting level {}", stack.len());
+
+    current_branches = vec![];
+    
+    current_branch
+}
+
 /// wraps all the rest
 pub fn body(input: &str) -> IResult<&str, Branch> {
     let (input, lines) = statement_base(input)?; // TODO: use nom's map
@@ -236,6 +252,7 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                     }
                 }else {
                     // FIXME: we would need close_options // popping back BEFORE this, otherwise, current_branch is still the nested branch & not the root
+                    // state_pop(stack, current_branch, current_branches);
                     println!("lower level leave this branch")
                 }
                 
@@ -249,6 +266,23 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
             _=> {
                 // we push everything else to the current branch
                 // FIXME: we would need close_options // popping back BEFORE this, otherwise, current_branch is still the nested branch & not the root
+
+                if indentation < previous_indentation {
+                    println!("poping");
+                    current_branches.push(current_branch.clone());
+                    if stack.len() > 0 {
+                        current_branch = stack.pop().unwrap();
+                        if current_branches.len() > 0 {
+                            current_branch.statements.push( // need to be pushed to the parent branch, so that is why we pop() first
+                                Statements::Choice(Choice { branches: current_branches.clone() , ..Default::default()} )
+                            );
+                        }   
+                    }
+                    // println!("nesting level {}", stack.len());
+                    current_branches = vec![];
+                }
+               
+
                 current_branch.statements.push(statement);
                 println!("nesting level {}", stack.len());
             }
@@ -257,12 +291,14 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
         // generic handling, outside of specific cases
         if indentation < previous_indentation {
             println!("lower level leave this branch");
-            close_options = true;
+            // close_options = true;
         }
 
         previous_indentation = indentation.clone();
 
         if close_options {
+            println!("poping");
+
             // IF we had an open CHOICE still gathering branches, add a choice with all current branches
             //If we have an empty line, OR if the IDENTATION IS LESS pop back to the previous level branch
             current_branches.push(current_branch.clone());
@@ -271,12 +307,11 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                 current_branch = stack.pop().unwrap();
                 if current_branches.len() > 0 {
                     current_branch.statements.push( // need to be pushed to the parent branch, so that is why we pop() first
-                        Statements::Choice(crate::Choice { branches: current_branches.clone() , ..Default::default()} )
+                        Statements::Choice(Choice { branches: current_branches.clone() , ..Default::default()} )
                     );
                 }   
             }
-            println!("nesting level {}", stack.len());
-
+            // println!("nesting level {}", stack.len());
             current_branches = vec![];
             close_options = false;
         }

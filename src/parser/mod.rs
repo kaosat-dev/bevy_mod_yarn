@@ -12,16 +12,8 @@ pub use body::*;
 pub mod nodes;
 pub use nodes::*;
 
-pub mod nom_supreme_yeah;
-pub use nom_supreme_yeah::*;
-
-pub mod working_choice_blocks;
-pub use working_choice_blocks::*;
-
-pub mod choices_alt;
-pub use choices_alt::*;
-
-use crate::YarnNode;
+pub mod structs;
+pub use structs::*;
 
 
 ///main entry point

@@ -1,0 +1,16 @@
+title: Test_node
+tags: 
+colorID: 0
+position: 567,-265
+---
+Dona: what is wrong ?
+-> Grumpy: are you asking me ?
+    Dona: sure
+    -> Grumpy: are you sure ?
+       Dona: yes
+    -> Grumpy: what ?
+       Dona: what what?
+-> Grumpy: lots of things
+   Dona: oh no !
+Bob: and me ?
+===

@@ -1,10 +1,8 @@
-use std::{fs};
+use std::{fs, collections::HashMap};
 
 mod parser;
 
-pub mod structs;
-pub use structs::*;
-use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, hex_color_final, parse_all_yeah, parse_all_yarn, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
+use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
 
 fn main() {
     println!("title {:?}",title("title: Start\n"));
@@ -147,26 +145,6 @@ position: 567,-265
     df
     "));*/
 
-
-    println!("parse_all_yeah {:?}", parse_all_yeah( "-> block1_choiceA
-    fg
-    -> block1_choiceB
-    bar
-
-    -> block2_choiceA
-    dfs
-    df
-    qsdqsd
-
-    -> block3_choiceA
-    -> block3_choiceB
-        sdfdsf
-        sdf
-    -> block3_choiceC
-    "));
-
-
-
     // println!("parse_bar {:?}",parse_bar("") );
    
    let foobazbar = "Lamik: Hi there !
@@ -209,13 +187,51 @@ position: 567,-265
 
     ";
 
-   /*if let Ok((_, root)) = body(foobazbar) {
-    
-    }else {
-        println!("failed to parse");
-    }*/
 
-    let file_path = "./assets/minimal.yarn"; // minimal.yarn barebones.yarn
+
+    /* 
+        different cases for nesting
+    // basic_eof
+    A: how are you
+    -> B: fine
+    -> B: not ok
+    EOF
+
+    basic_blank_line
+    A: how are you
+    -> B: fine
+    -> B: not ok
+    BLANK_LINE
+    EOF
+
+    // basic_eof + 
+    A: how are you
+    -> B: fine
+       A: cool
+    -> B: not ok
+       A: oh no
+    EOF
+
+    basic_blank_line +
+    A: how are you
+    -> B: fine
+       A: cool
+    -> B: not ok
+       A: oh no
+    BLANK_LINE
+    EOF
+
+    // dedent_eof 
+    A: how are you
+    -> B: fine
+    A: unrelated // dedent: ends the choice above
+    -> B: another choice
+       A: oh no
+    EOF
+
+    */
+
+    let file_path = "./assets/micro.yarn"; // minimal.yarn barebones.yarn
 
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
@@ -235,13 +251,3 @@ position: 567,-265
 
 
 
-
-/* 
-// TODO: move to tests
-#[test]
-fn test_integer() {
-    assert_eq!(yarn_commands("<<stop>>"), Ok(("", vec!["stop"])));
-    assert_eq!(yarn_commands("<<say hello>>"), Ok(("", vec!["say", "hello"])));
-    assert_eq!(yarn_commands("<<jump Other_node>>"), Ok(("", vec!["jump", "Other_node"])));
-}
-*/
