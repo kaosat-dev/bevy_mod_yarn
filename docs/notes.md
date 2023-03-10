@@ -86,3 +86,39 @@ many0(xx) can be usefull to force a result to a vec
 
 - perhaps call this bevy_pelote instead ? (pelotte de laine, yarn etc)
 - or bevy_tale
+
+
+- could / should we get rid of the branch struct ?? for choices
+
+ie currently we have
+```rust
+ Statements::Choice(Choice { branches: vec![
+    Branch {
+        statements: vec![
+            Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "are you asking me ?".into(), ..Default::default() }),
+            Statements::Dialogue(Dialogue { who: "Dona".into(), what: "yes".into(), ..Default::default() }),
+        ]
+    }, 
+    Branch {
+        statements: vec![
+            Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "fine !".into(), ..Default::default() }),
+            Statements::Dialogue(Dialogue { who: "Dona".into(), what: "good to hear".into(), ..Default::default() }),
+        ]
+    }
+], ..Default::default() } ) ,
+```
+
+we could have
+```rust
+ Statements::Choice(
+    Choice (
+        vec![
+            vec![
+            Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "are you asking me ?".into(), ..Default::default() }),
+            Statements::Dialogue(Dialogue { who: "Dona".into(), what: "yes".into(), ..Default::default() }),
+        ]
+
+    ])
+)}```
+
+// then again, meh, a lot less clear
