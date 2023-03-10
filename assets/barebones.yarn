@@ -15,8 +15,7 @@ position: 567,-265
 Lamik: bleh bleh
 Dona: what is wrong ?
 -> Lamik: nothing
-    Dona: oh ok
+   Dona: oh ok
 -> Lamik: everything!
-    <<jump Foo>>
-
+   <<jump Foo>>
 ===

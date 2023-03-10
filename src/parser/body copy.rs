@@ -1,4 +1,3 @@
-
 use nom::{
     bytes::complete::{tag, is_not, take_till, take_until, take_while_m_n, take_while},
     branch::alt,
@@ -118,7 +117,7 @@ pub fn statement_dialogue_who_what(input: &str) -> IResult<&str, Statements> {
 
 pub fn statement_dialogue_what(input: &str) -> IResult<&str, Statements> {
     let (input, what) = till_end(input)?;
-    let result =  Statements::Dialogue(Dialogue { who: "nobody".to_string(), what: what.trim_start().to_string(), ..Default::default() });
+    let result =  Statements::Dialogue(Dialogue { who: "nobody".to_string(), what: what.to_string(), ..Default::default() });
     Ok((input, result))
 }
 
@@ -172,7 +171,7 @@ pub fn statement_base_line(input: &str) -> IResult<&str, (&str, Vec<&str>, usize
     let mut tags: Vec<&str> = vec![];
     let mut result = content; // FIXME this whole thing is terrible
     if let Some(c) = con {
-        if let Ok(_tags) = hashtags(hashtags_raw) {
+        if let(Ok(_tags)) = hashtags(hashtags_raw) {
             tags = _tags.1;
         }
         result = c;
@@ -206,51 +205,23 @@ pub fn state_pop(mut stack: Vec<Branch>, mut current_branch : Branch, mut curren
     current_branch
 }
 
-/* 
-pub fn get_current_branch(mut choices_stack: Vec<Choice>, current_branch: Branch) -> Branch{
-
-    if choices_stack.len()> 0 {
-       return *choices_stack.last_mut()
-            .expect("we should always have one item in the stack here")
-            .branches.last_mut()
-                    .expect("we always have at least one branch")
-    }else {
-        return current_branch
-    }
-}*/
-
-/*
-Alternative impl
-do not directly add statements, go through an itermediary data structure
-- clear (blank_line /eof) => pops all items until it reaches 0
-- add (indentlevel(ie choice stack level), statement )
-enum HelperOps{
-    Add((usize, Statements)),
-    Clear,
-    None
-}
- */
-// TODO: do not just pop arbitrarly on < identation
-// keep track of indentation levels !!!
-
-
 /// wraps all the rest
 pub fn body(input: &str) -> IResult<&str, Branch> {
     let (input, lines) = statement_base(input)?; // TODO: use nom's map
 
-    let mut root_branch : Branch = Branch { statements: vec![], ..Default::default() };  // this is the root branch after the end of the parsing
+    let mut current_branches: Vec<Branch> = vec![]; // stores the data for the current choice node , if any
+    let mut current_branch : Branch = Branch { statements: vec![], ..Default::default() };  // this is the root branch after the end of the parsing
+    let mut stack: Vec<Branch> = vec![];
+
     let mut choices_stack: Vec<Choice> = vec![];
     // remember choice "groups" are delimited by : 
     // - empty white line
     // - a different indentation 
 
     let mut previous_indentation:usize = 0;
-    let mut previous_choice_indentation:usize = 0;
-
     let mut nesting_level= 0;
 
-    // let mut helper = HelperOps::None;
-
+    let mut close_options = false; // signal we need a cleanup
     for (line, tags, indentation) in lines.iter() {
         // the order of these is important !!
         let (_, statement) = alt((
@@ -264,107 +235,93 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
         let tags: Vec<String> = tags.clone().iter().map(|x|x.to_string()).collect();
         let indentation = indentation.clone();
 
+        // println!("statement  {:?}, tags: {:?}" ,statement.clone(), tags);
         match statement.clone(){
             Statements::ChoiceBranch(branch) => {
+                println!("nesting level BEFORE BEFORE {}//{}", nesting_level, stack.len());
+                println!("indentation vs previous {} //{}", indentation, previous_indentation);
                 // IF non nested, the branch is on the same level as previous branches
-                if indentation > previous_choice_indentation {
+                if indentation > previous_indentation {
                     println!("higher level, we need to nest !");
-                    choices_stack.push(Choice { branches: vec![branch], ..Default::default() });
 
-                }else if indentation == previous_choice_indentation {
+                }else if indentation == previous_indentation {
                     println!("same level , add another branch");
                     // push the previous choice branch to the list of branches in the choice
-                    choices_stack.last_mut().expect("we should always have one item in the stack here").branches.push(branch);
-                  
+                    current_branches.push(current_branch.clone());
+                    if stack.len() > 0 {
+                        current_branch = stack.pop().unwrap();
+                    }
                 }else {
-                    println!("lower level leave this branch");
-                    let choice = choices_stack.pop().unwrap();
-
-                    // FIXME: always the same stuff, of different "current branch" if we are at root level or nested in a Choice
-                    // if choices_stack.len() > 0 {
-                        choices_stack.last_mut().unwrap().branches.last_mut().unwrap().statements.push(Statements::Choice(choice));
-                        choices_stack.last_mut().unwrap().branches.push(branch);
-                    // }else {
-                     //   root_branch.statements.push(Statements::Choice(choice));
-                   // }
-                    
+                    // FIXME: we would need close_options // popping back BEFORE this, otherwise, current_branch is still the nested branch & not the root
+                    // state_pop(stack, current_branch, current_branches);
+                    println!("lower level leave this branch")
                 }
-                previous_choice_indentation = indentation.clone();
+                
+                stack.push(current_branch);
+                current_branch = branch;
+                nesting_level = stack.len();
             }
             Statements::Empty => {
-                // println!("blank line");
-                // Empty lines reset the whole stack to 0: ie we should pop everything one by one to close off the options
-                // FIXME: how to dedupe this ? closures do not work , external functions do not work
-                if choices_stack.len() > 0 {
-                    // println!("remaining {}, poping", choices_stack.len());
-                    // FIXME: horrible implementation 
-                    let mut child = choices_stack.pop().unwrap();
-                    if choices_stack.len()> 0 {
-                        while let Some(mut parent_choice) = choices_stack.pop() {
-                            println!("in loop");
-                            if choices_stack.len()> 0 {
-                                parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                                child = parent_choice;
-                            }else {
-                                parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                                root_branch.statements.push(Statements::Choice(parent_choice.clone()));
-                            }
-                        }
-                    }else {
-                        root_branch.statements.push(Statements::Choice(child.clone()));
-                    } 
-                }
+                close_options = true;
             }
             _=> {
                 // we push everything else to the current branch
+                // FIXME: we would need close_options // popping back BEFORE this, otherwise, current_branch is still the nested branch & not the root
+
                 if indentation < previous_indentation {
                     println!("poping");
-                    if choices_stack.len()> 0 {
-                        let choice = choices_stack.pop().unwrap();
-                        if choices_stack.len() > 0 {
-                            choices_stack.last_mut().unwrap().branches.last_mut().unwrap().statements.push(Statements::Choice(choice));
-                        }else {
-                            root_branch.statements.push(Statements::Choice(choice));
-                        }
+                    current_branches.push(current_branch.clone());
+                    if stack.len() > 0 {
+                        current_branch = stack.pop().unwrap();
+                        if current_branches.len() > 0 {
+                            current_branch.statements.push( // need to be pushed to the parent branch, so that is why we pop() first
+                                Statements::Choice(Choice { branches: current_branches.clone() , ..Default::default()} )
+                            );
+                        }   
                     }
+                    // println!("nesting level {}", stack.len());
+                    current_branches = vec![];
                 }
-                if choices_stack.len()> 0 {
-                    choices_stack.last_mut().unwrap().branches.last_mut().unwrap().statements.push(statement);
-                }else {
-                    root_branch.statements.push(statement);
-                }
+               
+
+                current_branch.statements.push(statement);
+                println!("nesting level {}", stack.len());
             }
         }
 
         // generic handling, outside of specific cases
         if indentation < previous_indentation {
-            //println!("lower level leave this branch");
+            println!("lower level leave this branch");
+            // close_options = true;
         }
+
         previous_indentation = indentation.clone();
-    }
-    // we still have items on the stack after finishing everything, so close them off until there is none left
-    if choices_stack.len() > 0 {
-        // println!("remaining {}, poping", choices_stack.len());
-        // FIXME: horrible implementation 
-        let mut child = choices_stack.pop().unwrap();
-        if choices_stack.len()> 0 {
-            while let Some(mut parent_choice) = choices_stack.pop() {
-                println!("in loop");
-                if choices_stack.len()> 0 {
-                    parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                    child = parent_choice;
-                }else {
-                    parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                    root_branch.statements.push(Statements::Choice(parent_choice.clone()));
-                }
+
+        if close_options {
+            println!("poping");
+
+            // IF we had an open CHOICE still gathering branches, add a choice with all current branches
+            //If we have an empty line, OR if the IDENTATION IS LESS pop back to the previous level branch
+            current_branches.push(current_branch.clone());
+
+            if stack.len() > 0 {
+                current_branch = stack.pop().unwrap();
+                if current_branches.len() > 0 {
+                    current_branch.statements.push( // need to be pushed to the parent branch, so that is why we pop() first
+                        Statements::Choice(Choice { branches: current_branches.clone() , ..Default::default()} )
+                    );
+                }   
             }
-        }else {
-            root_branch.statements.push(Statements::Choice(child.clone()));
-        } 
+            // println!("nesting level {}", stack.len());
+            current_branches = vec![];
+            close_options = false;
+        }
     }
     // lines done 
-    // here root_branch should be the root branch
-    Ok((input, root_branch))
+    // unstack & push the branches
+    // current_branches.push(current_branch);
+    // here current_branch should be the root branch
+    Ok((input, current_branch))
 }
 
 
@@ -376,7 +333,7 @@ pub fn display_dialogue_tree(branch: &Branch, indentation_level: usize) {
             Statements::Choice(choice) => {
                 println!("{}statement choices ({}): tags:{:?}", identation, choice.branches.len(), choice.tags);
                 for branch in choice.branches.iter() {
-                    println!("{}Branch:", identation);
+                    println!("{}{}Branch:", identation, identation);
                     display_dialogue_tree(branch, indentation_level +3 );
                 }
             }

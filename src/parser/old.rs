@@ -321,3 +321,16 @@ if let Ok((_, tree)) = parse_all_yarn(yarn_text) {
 }else {
     println!("failed to parse");
 } */
+
+ // we reverse iterate two by two do un pop & create things as they should be
+        /*let mut two_by_two = choices_stack.iter().rev()
+            .zip(choices_stack.iter().rev().skip(1))
+            .collect::<Vec<_>>();
+        for (cur, mut prev) in two_by_two.iter_mut() {
+            println!("cur {:?} prev {:?}", cur, prev);
+            prev.branches.last_mut().unwrap().statements.push(
+                Statements::Choice(**cur)
+            );
+            //current_branch.statements.push(Statements::Choice(choice));
+
+        }*/

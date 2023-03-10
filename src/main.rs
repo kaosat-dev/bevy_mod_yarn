@@ -5,7 +5,7 @@ mod parser;
 use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
 
 fn main() {
-    println!("title {:?}",title("title: Start\n"));
+    /*println!("title {:?}",title("title: Start\n"));
     println!("title {:?}",title("title: Other_node\n"));
     println!("title {:?}",title("   title   :   Other_node\n"));
     println!("title {:?}",title(" title: Other_node   \n"));
@@ -96,7 +96,7 @@ position: 567,-265
     println!("yarn_conditionals {:?}", yarn_conditionals("<<if$gold_amount < 10>>Baker: Well, you can't afford one!<<endif>>")); // INVALID
     println!("yarn_conditionals {:?}", yarn_conditionals("<<if $gold_amount < 10 >> Baker: Well, you can't afford one! <<endif>>"));
     println!("yarn_conditionals {:?}", yarn_conditionals("<<if $gold_amount < 10 >> Baker: Well, you can't afford one! <<else>> Baker: Here you go!  <<endif>>"));
-
+    */
     // simple line with character
     /* 
     assert_eq!(
@@ -229,9 +229,17 @@ position: 567,-265
        A: oh no
     EOF
 
+    // multi_indent_eof 
+    A: how are you
+    -> B: fine
+        -> B: a layer
+            -> B: another layer // here we would have pop the state & close options until we are back at level 0
+    EOF
+
+
     */
 
-    let file_path = "./assets/micro.yarn"; // minimal.yarn barebones.yarn
+    let file_path = "./assets/complex.yarn"; // simple, micro minimal.yarn barebones.yarn
 
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");

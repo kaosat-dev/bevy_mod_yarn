@@ -7,7 +7,7 @@
     - [ ] dialogues: attributes
 
     - [x] choices: blank line to close a list of choices
-    - [ ] choices: nested/ indentation handling 
+    - [x] choices: nested/ indentation handling 
     - [x] commands: basic parsing
 
     - [ ] conditional expressions
@@ -17,3 +17,11 @@
     - [x] tags parsing
     - [ ] expressions parsing
     - [ ] add testing
+    - [x] fix overly sensitive indentation issues
+        - [x] we might need to track choice indentation seperatly from Dialogue/Command indentation
+        ie this works :
+            -> Lamik: everything!
+            <<jump Foo>>
+        but this does not
+            -> Lamik: everything!
+                <<jump Foo>> // notice the space at the start of the line: that changes the "current_indentation" in our tracking, messing things up
