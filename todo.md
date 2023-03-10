@@ -17,6 +17,9 @@
     - [x] tags parsing
     - [ ] expressions parsing
     - [ ] add testing
+        - [x] yarn files with title & some basic dialogues
+        - [x] yarn files with title & multiple nested levels of choices
+
     - [x] fix overly sensitive indentation issues
         - [x] we might need to track choice indentation seperatly from Dialogue/Command indentation
         ie this works :

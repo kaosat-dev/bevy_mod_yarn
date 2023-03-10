@@ -137,7 +137,7 @@ fn test_branching_basic_eof_seperator(){
 
 
 #[test]
-fn test_branching_basic_eof_seperator_lines_at_root(){
+fn test_branching_basic_eof_seperator_lines_at_root_and_commands(){
 
     let choices = "title: Test_node
     ---
@@ -146,9 +146,12 @@ fn test_branching_basic_eof_seperator_lines_at_root(){
     Dona: good morning , how are you ?
     -> Lamik: are you asking me ?
        Dona: yes
+       <<jump node_a>>
     -> Lamik: fine !
        Dona: good to hear
+       <<jump node_b>>
     Lamik: some other stuff
+    <<blowup universe now>>
     ===
     ";
     let mut expected : HashMap<String,YarnNode> = HashMap::new();
@@ -168,16 +171,20 @@ fn test_branching_basic_eof_seperator_lines_at_root(){
                                 statements: vec![
                                     Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "are you asking me ?".into(), ..Default::default() }),
                                     Statements::Dialogue(Dialogue { who: "Dona".into(), what: "yes".into(), ..Default::default() }),
+                                    Statements::Command(YarnCommand { name: "jump".into(), params: "node_a".to_string(), ..Default::default() }),
                                 ]
                             }, 
                             Branch {
                                 statements: vec![
                                     Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "fine !".into(), ..Default::default() }),
                                     Statements::Dialogue(Dialogue { who: "Dona".into(), what: "good to hear".into(), ..Default::default() }),
+                                    Statements::Command(YarnCommand { name: "jump".into(), params: "node_b".to_string(), ..Default::default() }),
                                 ]
                             }
                         ], ..Default::default() } ) ,
                         Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "some other stuff".into(), ..Default::default() }),
+                        Statements::Command(YarnCommand { name: "blowup".into(), params: "universe,now".to_string(), ..Default::default() }),
+
                     ]
                 }
             }, 
