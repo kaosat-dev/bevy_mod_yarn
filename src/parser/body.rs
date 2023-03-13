@@ -13,7 +13,7 @@ use nom::{
     number::complete::{float, recognize_float}
 };
 
-use super::{YarnCommand, Statements, Dialogue, Choice, Branch};
+use super::{YarnCommand, Statements, Dialogue, Choice, Branch, variable_identifier};
 use super::{spacey, parse_params, identifier, tag_identifier };
 
 // TODO, replace parse_params with an EXPRESSION
@@ -108,6 +108,15 @@ pub fn attributes(input: &str) -> IResult<&str, (String, Vec<&str>)> {
     let text_withouth_attributes = withouth_attributes.join(" ");
 
     Ok((input, (text_withouth_attributes, attributes)))
+}
+
+
+/// https://github.com/YarnSpinnerTool/YarnSpinner/blob/main/Documentation/Yarn-Spec.md#dialogue-statement
+/// we want to return the text BEFORE and AFTER the tagged part
+/// possible solutions: peek, success, consume
+/// alternate: line terminated((alt("{", "<<<",  ) ))
+pub fn interpolated_value(input: &str) -> IResult<&str, &str> {
+    delimited(tag("{"), variable_identifier, tag("}"))(input)
 }
 
 pub fn statement_dialogue_who_what(input: &str) -> IResult<&str, Statements> {
@@ -223,13 +232,13 @@ pub fn get_current_branch(mut choices_stack: Vec<Choice>, current_branch: Branch
 Alternative impl
 do not directly add statements, go through an itermediary data structure
 - clear (blank_line /eof) => pops all items until it reaches 0
-- add (indentlevel(ie choice stack level), statement )
+- add (indentlevel(ie choice stack level), statement )*/
 enum HelperOps{
     Add((usize, Statements)),
     Clear,
     None
 }
- */
+ 
 // TODO: do not just pop arbitrarly on < identation
 // keep track of indentation levels !!!
 
@@ -240,6 +249,9 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
 
     let mut root_branch : Branch = Branch { statements: vec![], ..Default::default() };  // this is the root branch after the end of the parsing
     let mut choices_stack: Vec<Choice> = vec![];
+    let mut current_branch:& mut Branch;
+    current_branch = &mut root_branch;
+    // current_branch.statements.push(Statements::Empty);
     // remember choice "groups" are delimited by : 
     // - empty white line
     // - a different indentation 
@@ -249,9 +261,9 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
 
     let mut nesting_level= 0;
 
-    // let mut helper = HelperOps::None;
+    let mut helper = HelperOps::None;
 
-    for (line, tags, indentation) in lines.iter() {
+    for (index, (line, tags, indentation)) in lines.iter().enumerate() {
         // the order of these is important !!
         let (_, statement) = alt((
             statement_empty_line,
@@ -270,7 +282,6 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                 if indentation > previous_choice_indentation {
                     println!("higher level, we need to nest !");
                     choices_stack.push(Choice { branches: vec![branch], ..Default::default() });
-
                 }else if indentation == previous_choice_indentation {
                     println!("same level , add another branch");
                     // push the previous choice branch to the list of branches in the choice
@@ -295,25 +306,7 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                 // println!("blank line");
                 // Empty lines reset the whole stack to 0: ie we should pop everything one by one to close off the options
                 // FIXME: how to dedupe this ? closures do not work , external functions do not work
-                if choices_stack.len() > 0 {
-                    // println!("remaining {}, poping", choices_stack.len());
-                    // FIXME: horrible implementation 
-                    let mut child = choices_stack.pop().unwrap();
-                    if choices_stack.len()> 0 {
-                        while let Some(mut parent_choice) = choices_stack.pop() {
-                            println!("in loop");
-                            if choices_stack.len()> 0 {
-                                parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                                child = parent_choice;
-                            }else {
-                                parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                                root_branch.statements.push(Statements::Choice(parent_choice.clone()));
-                            }
-                        }
-                    }else {
-                        root_branch.statements.push(Statements::Choice(child.clone()));
-                    } 
-                }
+                helper = HelperOps::Clear;
             }
             _=> {
                 // we push everything else to the current branch
@@ -341,26 +334,36 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
             //println!("lower level leave this branch");
         }
         previous_indentation = indentation.clone();
-    }
-    // we still have items on the stack after finishing everything, so close them off until there is none left
-    if choices_stack.len() > 0 {
-        // println!("remaining {}, poping", choices_stack.len());
-        // FIXME: horrible implementation 
-        let mut child = choices_stack.pop().unwrap();
-        if choices_stack.len()> 0 {
-            while let Some(mut parent_choice) = choices_stack.pop() {
-                println!("in loop");
-                if choices_stack.len()> 0 {
-                    parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                    child = parent_choice;
-                }else {
-                    parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
-                    root_branch.statements.push(Statements::Choice(parent_choice.clone()));
+
+        if index == lines.len() - 1 {
+            helper = HelperOps::Clear;
+        }
+
+        match helper {
+            // we still have items on the stack after finishing everything, so close them off until there is none left
+            HelperOps::Clear => {
+                if choices_stack.len() > 0 {
+                    // println!("remaining {}, poping", choices_stack.len());
+                    // FIXME: horrible implementation 
+                    let mut child = choices_stack.pop().unwrap();
+                    if choices_stack.len()> 0 {
+                        while let Some(mut parent_choice) = choices_stack.pop() {
+                            println!("in loop");
+                            if choices_stack.len()> 0 {
+                                parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
+                                child = parent_choice;
+                            }else {
+                                parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
+                                root_branch.statements.push(Statements::Choice(parent_choice.clone()));
+                            }
+                        }
+                    }else {
+                        root_branch.statements.push(Statements::Choice(child.clone()));
+                    } 
                 }
             }
-        }else {
-            root_branch.statements.push(Statements::Choice(child.clone()));
-        } 
+            _ => {}
+        }
     }
     // lines done 
     // here root_branch should be the root branch

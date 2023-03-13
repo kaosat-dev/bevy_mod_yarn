@@ -2,6 +2,8 @@ use std::{fs, collections::HashMap};
 
 mod parser;
 
+use bevy_mod_yarn::parser::interpolated_value;
+
 use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
 
 fn main() {
@@ -238,8 +240,9 @@ position: 567,-265
 
 
     */
+    println!("interpolated {:?}", interpolated_value("you now have {$coins},  congratulations !"));
 
-    let file_path = "./assets/complex.yarn"; // simple, micro minimal.yarn barebones.yarn
+    let file_path = "./assets/micro.yarn"; // simple, micro minimal.yarn barebones.yarn
 
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
