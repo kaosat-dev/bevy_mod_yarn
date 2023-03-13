@@ -277,7 +277,9 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
         let indentation = indentation.clone();
 
         match statement.clone(){
-            Statements::ChoiceBranch(branch) => {
+            Statements::ChoiceBranch(mut branch) => {
+                // let clone = branch.clone();
+                // current_branch = &mut branch;
                 // IF non nested, the branch is on the same level as previous branches
                 if indentation > previous_choice_indentation {
                     println!("higher level, we need to nest !");
@@ -292,13 +294,12 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                     let choice = choices_stack.pop().unwrap();
 
                     // FIXME: always the same stuff, of different "current branch" if we are at root level or nested in a Choice
-                    // if choices_stack.len() > 0 {
+                    if choices_stack.len() > 0 {
                         choices_stack.last_mut().unwrap().branches.last_mut().unwrap().statements.push(Statements::Choice(choice));
                         choices_stack.last_mut().unwrap().branches.push(branch);
-                    // }else {
-                     //   root_branch.statements.push(Statements::Choice(choice));
-                   // }
-                    
+                     }else {
+                        root_branch.statements.push(Statements::Choice(choice));
+                   }
                 }
                 previous_choice_indentation = indentation.clone();
             }
@@ -321,7 +322,7 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                         }
                     }
                 }
-                if choices_stack.len()> 0 {
+                if choices_stack.len() > 0 {
                     choices_stack.last_mut().unwrap().branches.last_mut().unwrap().statements.push(statement);
                 }else {
                     root_branch.statements.push(statement);
@@ -367,6 +368,7 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
     }
     // lines done 
     // here root_branch should be the root branch
+    root_branch.statements.push(Statements::Exit);
     Ok((input, root_branch))
 }
 

@@ -22,6 +22,7 @@ fn test_parse_minimal() {
                     statements: vec![
                         Statements::Dialogue(Dialogue { who: "Dona".into(), what: "what is wrong ?".into(), ..Default::default() }),
                         Statements::Dialogue(Dialogue { who: "Grumpy".into(), what: "...".into(), ..Default::default() }),
+                        Statements::Exit,
                     ]
                 }
             }, 
@@ -77,6 +78,7 @@ fn test_branching_basic_whiteline_seperator(){
                                 ]
                             }
                         ], ..Default::default() } ) ,
+                        Statements::Exit,
                     ]
                 }
             }, 
@@ -126,6 +128,7 @@ fn test_branching_basic_eof_seperator(){
                                 ]
                             }
                         ], ..Default::default() } ) ,
+                        Statements::Exit,
                     ]
                 }
             }, 
@@ -184,7 +187,7 @@ fn test_branching_basic_eof_seperator_lines_at_root_and_commands(){
                         ], ..Default::default() } ) ,
                         Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "some other stuff".into(), ..Default::default() }),
                         Statements::Command(YarnCommand { name: "blowup".into(), params: "universe,now".to_string(), ..Default::default() }),
-
+                        Statements::Exit,
                     ]
                 }
             }, 
@@ -242,6 +245,7 @@ it was a beautiful day , said nobody
                                 ]
                             }
                         ], ..Default::default() } ) ,
+                        Statements::Exit,
                     ]
                 }
             }, 
