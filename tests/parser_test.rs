@@ -61,7 +61,6 @@ fn test_branching_basic_whiteline_seperator(){
                 Branch {
                     statements: vec![
                         Statements::Dialogue(Dialogue { who: "nobody".into(), what: "it was a beautiful day , said nobody".into(), ..Default::default() }),
-
                         Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "hi !".into(), ..Default::default() }),
                         Statements::Dialogue(Dialogue { who: "Dona".into(), what: "good morning , how are you ?".into(), ..Default::default() }),
                         Statements::Choice(Choice { branches: vec![

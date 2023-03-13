@@ -5,6 +5,7 @@
     - [x] dialogues: with or without character names
     - [ ] dialogues: interpolated values
     - [ ] dialogues: attributes
+    - [ ] dialogues: Escaping Text
 
     - [x] choices: blank line to close a list of choices
     - [x] choices: nested/ indentation handling 
@@ -28,3 +29,8 @@
         but this does not
             -> Lamik: everything!
                 <<jump Foo>> // notice the space at the start of the line: that changes the "current_indentation" in our tracking, messing things up
+
+
+            
+    - [ ] evaluator:
+        - [ ] fix issue with reaching end of a branch and not jumping back to previous level/root level

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::prelude::{Branch, Statements, Dialogue, YarnNode};
 
-#[derive(Debug)] // FIXME: the only needed dependency from bevy is the Component trait
+#[derive(Debug, Default)] // FIXME: the only needed dependency from bevy is the Component trait
 pub struct DialogueTracker {
     pub current_node: String,
     pub current: usize,
@@ -11,7 +11,7 @@ pub struct DialogueTracker {
 }
 
 // FIXME: temporary mock of Yarnasset
-struct YarnAsset {
+pub struct YarnAsset {
     pub raw: String,
     pub nodes: HashMap<String, YarnNode>
 }
@@ -19,12 +19,14 @@ struct YarnAsset {
 impl DialogueTracker  {
 
     // FIXME: add this back once we have added bevy as a dependency and added yarn_loader
-    /*fn set_current_branch(&mut self, yarn_asset: &YarnAsset) {
+    pub fn set_current_branch(&mut self, yarn_asset: &YarnAsset) {
         //let default = &yarn_asset.nodes[&self.current_node];
-        self.current_branch = yarn_asset.nodes[&self.current_node].branch.clone();
-    }*/
+        self.current_branch = yarn_asset.nodes[&self.current_node].branch.clone(); // FIXME: self.current_node might not be set correcly, add safeguard
+    }
 
-    fn next_entry(&mut self, yarn_asset: &YarnAsset) -> Statements {
+    /// go to next entry if available, currently also validates the selected choice
+    /// TODO: perhaps this should be called next_statement() ? or even just next() ?
+    pub fn next_entry(&mut self, yarn_asset: &YarnAsset) -> Statements {
         //FIXME yuck
         let old_entry = self.current_branch.statements[self.current].clone();
         match  old_entry {
@@ -82,8 +84,8 @@ impl DialogueTracker  {
         }
     }
 
-    fn next_choice(&mut self){
-        match self.current_line() {
+    pub fn next_choice(&mut self){
+        match self.current_statement() {
             Statements::Choice(ref choice) => {
                 self.current_choice += 1;
                 if self.current_choice >= choice.branches.len() {
@@ -96,8 +98,8 @@ impl DialogueTracker  {
         }
     }
 
-    fn prev_choice(&mut self){
-        match self.current_line() {
+    pub fn prev_choice(&mut self){
+        match self.current_statement() {
             Statements::Choice(ref choice) => {
                 if self.current_choice == 0 {
                     self.current_choice = choice.branches.len() - 1;
@@ -111,13 +113,13 @@ impl DialogueTracker  {
         }
     }
 
-    fn current_line(&self) -> Statements {
-        let current_line = self.current_branch.statements[self.current].clone();
-        current_line
+    pub fn current_statement(&self) -> Statements {
+        let current_statement = self.current_branch.statements[self.current].clone();
+        current_statement
     }
     // TODO: these two functions are only needed because we do no keep a Dialogue in the branch data structure ... (a valid Choice HAS to have one, the root branch does not have one, obviously)
-    fn get_current_choice_branch_first(&self) -> Result<Dialogue, String> {
-        let current = self.current_line();
+    pub fn get_current_choice_branch_first(&self) -> Result<Dialogue, String> {
+        let current = self.current_statement();
         match current {
             Statements::Choice(ref choice) => {
                 let current_choice = &choice.branches[self.current_choice];
@@ -137,12 +139,14 @@ impl DialogueTracker  {
             } 
         }
     }
-    fn get_current_choices (&self) -> Vec<Dialogue> {
-        let current = self.current_line();
+
+    /// helper function for choices: gives you a list of dialogues (ie, who, what), for example when
+    /// you want to display the list current choices to the player 
+    pub fn get_current_choices (&self) -> Vec<Dialogue> {
+        let current = self.current_statement();
         match current {
             Statements::Choice(ref choice) => {
-                return choice
-                    .branches
+                return choice.branches
                     .iter()
                     .map(|branch| {
                         let first = &branch.statements[0];

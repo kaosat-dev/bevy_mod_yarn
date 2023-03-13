@@ -13,12 +13,12 @@ I am aiming to be able to parse as much of the Yarn Syntax as possible:
 
 - [x] basic nodes parsing (header + body)
 - [x] dialogues: with or without character names
+- [ ] dialogues: conditional branching with expressions
 - [ ] dialogues: interpolated values
 - [ ] dialogues: attributes
-- [ ] dialogues: conditional branching with expressions
 
 - [x] choices: blank line to close a list of choices
-- [ ] choices: nested/ indentation handling 
+- [x] choices: nested/ indentation handling 
 
 - [x] commands: basic parsing
 
