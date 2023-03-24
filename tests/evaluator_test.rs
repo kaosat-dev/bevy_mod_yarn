@@ -15,20 +15,20 @@ fn test_evaluate_minimal() {
         nodes: parsed
     };
 
-    let mut dialogue_tracker = DialogueTracker{ current_node: "Test_node".into(), ..Default::default() };
-    dialogue_tracker.set_current_branch(&yarn_asset);
+    let mut dialogue_tracker = DialogueTracker::new(&yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
+    // dialogue_tracker.set_current_branch(&yarn_asset);
 
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "Dona".into(), what: "what is wrong ?".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
     // go to next entry
-    dialogue_tracker.next_entry(&yarn_asset);
+    dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "Grumpy".into(), what: "...".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
-    dialogue_tracker.next_entry(&yarn_asset);
+    dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Exit;
     assert_eq!(current_statement, expected);
@@ -37,7 +37,7 @@ fn test_evaluate_minimal() {
 
 
 #[test]
-fn test_branching_basic_whiteline_seperator(){
+fn test_evaluate_branching_basic(){
 
     let choices = "title: Test_node
     ---
@@ -58,24 +58,24 @@ fn test_branching_basic_whiteline_seperator(){
         nodes: parsed
     };
 
-    let mut dialogue_tracker = DialogueTracker{ current_node: "Test_node".into(), ..Default::default() };
-    dialogue_tracker.set_current_branch(&yarn_asset);
+    let mut dialogue_tracker = DialogueTracker::new(&yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
+    // dialogue_tracker.set_current_branch(&yarn_asset);
 
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "nobody".into(), what: "it was a beautiful day , said nobody".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
-    dialogue_tracker.next_entry(&yarn_asset);
+    dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "hi !".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
-    dialogue_tracker.next_entry(&yarn_asset);
+    dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "Dona".into(), what: "good morning , how are you ?".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
-    dialogue_tracker.next_entry(&yarn_asset);
+    dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
     let expected  =  Statements::Choice(Choice { branches: vec![
         Branch {
@@ -103,18 +103,19 @@ fn test_branching_basic_whiteline_seperator(){
 
     // choose the other choice
     dialogue_tracker.next_choice();
-    dialogue_tracker.next_entry(&yarn_asset); // FIXME: still not sure about this way of validating choices
+    dialogue_tracker.next_entry(); // FIXME: still not sure about this way of validating choices
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "fine !".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
 
-    dialogue_tracker.next_entry(&yarn_asset);
+    dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "Dona".into(), what: "good to hear".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
-    dialogue_tracker.next_entry(&yarn_asset);
+    //FIXME
+    dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
     let expected  = Statements::Exit;
     assert_eq!(current_statement, expected);
