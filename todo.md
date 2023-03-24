@@ -34,3 +34,5 @@
             
     - [ ] evaluator:
         - [ ] fix issue with reaching end of a branch and not jumping back to previous level/root level
+        - [x] remove need to pass yarn_asset to every next_entry call
+    - [ ] add support for multiple yarn files in a managed way : see https://docs.yarnspinner.dev/using-yarnspinner-with-unity/importing-yarn-files/yarn-projects
