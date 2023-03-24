@@ -173,19 +173,19 @@ fn test_branching_basic_eof_seperator_lines_at_root_and_commands(){
                                 statements: vec![
                                     Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "are you asking me ?".into(), ..Default::default() }),
                                     Statements::Dialogue(Dialogue { who: "Dona".into(), what: "yes".into(), ..Default::default() }),
-                                    Statements::Command(YarnCommand { name: "jump".into(), params: "node_a".to_string(), ..Default::default() }),
+                                    Statements::Command(YarnCommand { name: "jump".into(), params: "node_a".to_string(), command_type: Commands::Jump, ..Default::default() }),
                                 ]
                             }, 
                             Branch {
                                 statements: vec![
                                     Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "fine !".into(), ..Default::default() }),
                                     Statements::Dialogue(Dialogue { who: "Dona".into(), what: "good to hear".into(), ..Default::default() }),
-                                    Statements::Command(YarnCommand { name: "jump".into(), params: "node_b".to_string(), ..Default::default() }),
+                                    Statements::Command(YarnCommand { name: "jump".into(), params: "node_b".to_string(), command_type: Commands::Jump, ..Default::default() }),
                                 ]
                             }
                         ], ..Default::default() } ) ,
                         Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "some other stuff".into(), ..Default::default() }),
-                        Statements::Command(YarnCommand { name: "blowup".into(), params: "universe,now".to_string(), ..Default::default() }),
+                        Statements::Command(YarnCommand { name: "blowup".into(), params: "universe,now".to_string(), command_type: Commands::Generic, ..Default::default() }),
                         Statements::Exit,
                     ]
                 }

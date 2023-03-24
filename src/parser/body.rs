@@ -13,14 +13,33 @@ use nom::{
     number::complete::{float, recognize_float}
 };
 
-use super::{YarnCommand, Statements, Dialogue, Choice, Branch, variable_identifier};
+use super::{YarnCommand, Statements, Dialogue, Choice, Branch, variable_identifier, Commands};
 use super::{spacey, parse_params, identifier, tag_identifier };
 
 // TODO, replace parse_params with an EXPRESSION
 pub fn yarn_commands(input: &str) -> IResult<&str, YarnCommand> {
     let (input, params) = delimited(spacey(tag("<<")), take_until(">>"), spacey(tag(">>")))(input)?;
     let (_, params) = parse_params(params)?;
-    let command = YarnCommand{name: params[0].to_string(), params: params[1..].join(","), ..Default::default()};
+    let command_name = params[0];
+    let cmd = match command_name {
+        "declare" => {
+           Commands::Declare 
+        }
+        "set" => {
+            Commands::Set
+        }
+        "jump" => {
+            Commands::Jump
+        }
+        "stop" => {
+            Commands::Stop
+        }
+        _=> {
+            Commands::Generic
+        }
+    };
+
+    let command = YarnCommand{name: params[0].to_string(), params: params[1..].join(","), command_type:cmd, ..Default::default()};
     Ok((input, command))
 }
 

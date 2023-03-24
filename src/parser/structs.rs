@@ -31,8 +31,20 @@ pub struct Choice{
 pub struct YarnCommand {
     pub name: String,
     pub params: String,
+    pub command_type: Commands, // FIXME: meh, this should perhaps replace the YarnCommand completely ?
     pub tags: Vec<String>,
 }
+
+#[derive(Debug, Clone, Default, PartialEq)]
+pub enum Commands{
+    Declare,
+    Set,
+    Jump,
+    Stop,
+    #[default]
+    Generic
+} 
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Statements {
