@@ -96,9 +96,9 @@ impl DialogueTracker<'_>  {
             println!("last in current branch reached");
             if self.branches_stack.len() > 0 {
                 self.current_branch = self.branches_stack.pop().unwrap();
-                self.current_choice_index = 0;
-                self.current_statement_index = 0;
-                // reset to previous indices ?
+                let (choice_index, statement_index) = self.indices_stack.pop().unwrap();
+                self.current_choice_index = 0; // reset choice to first choice
+                self.current_statement_index = statement_index + 1 ; // FIXME: check if this is a valid statement !!
             }
         }
         let current_entry = self.current_branch.statements[self.current_statement_index].clone();
