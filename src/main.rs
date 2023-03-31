@@ -253,6 +253,28 @@ position: 567,-265
         display_dialogue_tree(&node.branch, 1);
     }
 
+    let file_path = "./assets/other.yarn"; // simple, micro minimal.yarn barebones.yarn
+    println!("indentation return");
+    let contents = fs::read_to_string(file_path)
+        .expect("Should have been able to read the file");
+    let parsed = parse_yarn_nodes_nom(&contents);
+    for (_node_name, node) in parsed.iter() {
+        println!("NODE({}):", node.title);
+        println!("  Statements tree");
+        display_dialogue_tree(&node.branch, 1);
+    }
+
+    let file_path = "./assets/complex.yarn"; // simple, micro minimal.yarn barebones.yarn
+    println!("COMPLEX");
+    let contents = fs::read_to_string(file_path)
+        .expect("Should have been able to read the file");
+    let parsed = parse_yarn_nodes_nom(&contents);
+    for (_node_name, node) in parsed.iter() {
+        println!("NODE({}):", node.title);
+        println!("  Statements tree");
+        display_dialogue_tree(&node.branch, 1);
+    }
+
    
    
     println!("the end");
