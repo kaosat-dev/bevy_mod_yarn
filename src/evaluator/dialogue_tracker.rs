@@ -1,13 +1,10 @@
 use std::collections::HashMap;
 
-use crate::prelude::{Branch, Statements, Dialogue, YarnNode, Commands};
+use crate::prelude::{Branch, Statements, Dialogue, YarnNode, Commands, YarnAsset};
 
 // FIXME: temporary mock of Yarnasset
-#[derive(Debug, Default)] 
-pub struct YarnAsset {
-    pub raw: String,
-    pub nodes: HashMap<String, YarnNode>
-}
+
+
 
 #[derive(Debug)] // FIXME: the only needed dependency from bevy is the Component trait
 pub struct DialogueTracker<'a>{

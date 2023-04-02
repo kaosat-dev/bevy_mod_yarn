@@ -1,4 +1,4 @@
-use bevy_mod_yarn::{evaluator::{DialogueTracker, YarnAsset}, prelude::{Statements, Dialogue, parse_yarn_nodes_nom, Branch, Choice, YarnCommand, Commands}};
+use bevy_mod_yarn::{ prelude::{Statements, Dialogue, parse_yarn_nodes_nom, Branch, Choice, YarnCommand, Commands, YarnAsset, DialogueTracker}};
 
 #[test]
 fn test_evaluate_minimal() {

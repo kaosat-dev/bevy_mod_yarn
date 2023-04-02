@@ -8,3 +8,14 @@ edition = "2021"
 [dependencies]
 nom = "7.1.2"
 nom-supreme = "0.8.0"
+bevy = { version = "0.10.1", default-features = false, features = ["bevy_asset"] }
+#asset::{AssetLoader, LoadContext, LoadedAsset},prelude::*,reflect::TypeUuid,utils::{BoxedFuture, HashMap},
+
+
+[dev-dependencies]
+bevy="0.10.1"
+
+
+[[example]]
+name = "basic"
+path = "examples/basic/basic.rs"

@@ -1,19 +1,16 @@
+use std::collections::HashMap;
 use bevy::{
     asset::{AssetLoader, LoadContext, LoadedAsset},
     prelude::*,
     reflect::TypeUuid,
-    utils::{BoxedFuture, HashMap},
+    utils::{BoxedFuture},
 };
-use serde::Deserialize;
 
-use crate::gameplay::{YarnNode, parse_yarn_nodes_naive};
+use crate::{prelude::{YarnNode, parse_yarn_nodes_nom, YarnAsset}};
+//use serde::Deserialize;
 
-#[derive(Debug, TypeUuid)]
-#[uuid = "8f061f89-6b4a-407b-96b7-c61cc2e2202b"]
-pub struct YarnAsset {
-    pub raw: String,
-    pub nodes: HashMap<String, YarnNode>
-}
+// use crate::gameplay::{YarnNode, parse_yarn_nodes_naive};
+
 
 #[derive(Default)]
 pub struct YarnAssetLoader;
@@ -26,9 +23,8 @@ impl AssetLoader for YarnAssetLoader {
     ) -> BoxedFuture<'a, Result<(), bevy::asset::Error>> {
         Box::pin(async move {
             let data_str = std::str::from_utf8(bytes)?;
-            // parse_yarn_nodes_nom(data_str);
             let asset = YarnAsset {
-                nodes: parse_yarn_nodes_naive(data_str),
+                nodes: parse_yarn_nodes_nom(data_str),
                 raw: data_str.into()
             };
             load_context.set_default_asset(LoadedAsset::new(asset));
