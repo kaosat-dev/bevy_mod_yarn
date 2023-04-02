@@ -62,6 +62,7 @@ impl DialogueTracker<'_>  {
 
     /// go to next entry if available, currently also validates the selected choice
     /// TODO: perhaps this should be called next_statement() ? or even just next() ?
+    /// TODO: this should either return an Option<Statement> or another error signifier (ie for example if there is no node for jumping etc)
     pub fn next_entry(&mut self) -> Statements {
         if self.yarn_asset.is_none() {
             // FIXME: not graceful at all !!
@@ -118,6 +119,7 @@ impl DialogueTracker<'_>  {
                         
                             return self.current_branch.statements[self.current_statement_index].clone();
                         }else {
+                            println!("no node named {} found in the yarn file", &command.params);
                             return self.next_entry();
                         }
                     }
@@ -161,6 +163,19 @@ impl DialogueTracker<'_>  {
                     self.current_choice_index = choice.branches.len() - 1;
                 } else {
                     self.current_choice_index -= 1;
+                }
+            }
+            _ => {
+                println!("not a choice !");
+            }
+        }
+    }
+
+    pub fn specific_choice(&mut self, choice_index: usize) {
+        match self.current_statement() {
+            Statements::Choice(ref choice) => {
+                if choice_index != 0 && choice_index < choice.branches.len() {
+                    self.current_choice_index = choice_index;
                 }
             }
             _ => {
