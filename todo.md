@@ -17,7 +17,7 @@
     - [x] fix choice arrow still present in the first Statement in a choice
     - [x] tags parsing
     - [ ] expressions parsing
-    - [ ] add testing
+    - [x] add testing
         - [x] yarn files with title & some basic dialogues
         - [x] yarn files with title & multiple nested levels of choices
 
@@ -33,6 +33,14 @@
 
             
     - [ ] evaluator:
-        - [ ] fix issue with reaching end of a branch and not jumping back to previous level/root level
+        - [x] fix issue with reaching end of a branch and not jumping back to previous level/root level
         - [x] remove need to pass yarn_asset to every next_entry call
+        - [x] add ability to specify a specific choice directly in addition of previous/next choices
+        - [ ] rename next_entry() to next()
+        - [ ] next_entry() should return an Option<Statement> perhaps ? (closer to an iterator, error handling etc)
     - [ ] add support for multiple yarn files in a managed way : see https://docs.yarnspinner.dev/using-yarnspinner-with-unity/importing-yarn-files/yarn-projects
+- [ ] integrate with bevy 0.9.1
+    - [ ] add example
+        - [ ] two characters (player + 1)
+        - [ ] speech bubble
+
