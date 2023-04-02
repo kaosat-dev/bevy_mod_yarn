@@ -294,9 +294,9 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
         )(line)?;
         let tags: Vec<String> = tags.clone().iter().map(|x|x.to_string()).collect();
         let indentation = indentation.clone();
-        println!("line {:?}", statement);
+        //println!("line {:?}", statement);
 
-        println!("indentation {} {}", indentation, previous_choice_indentation);
+        //println!("indentation {} {}", indentation, previous_choice_indentation);
 
         match statement.clone(){
             Statements::ChoiceBranch(mut branch) => {
@@ -308,7 +308,7 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                     choices_stack.push(Choice { branches: vec![branch], ..Default::default() });
                 }else if indentation == previous_choice_indentation {
                     println!("same level , add another branch");
-                    println!("choices stack {:?}", choices_stack);
+                    //println!("choices stack {:?}", choices_stack);
                     // push the previous choice branch to the list of branches in the choice
                     choices_stack.last_mut().expect("we should always have one item in the stack here").branches.push(branch);
                   
