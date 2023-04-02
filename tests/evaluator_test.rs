@@ -1,4 +1,4 @@
-use bevy_mod_yarn::{evaluator::{DialogueTracker, YarnAsset}, prelude::{Statements, Dialogue, parse_yarn_nodes_nom, Branch, Choice}};
+use bevy_mod_yarn::{evaluator::{DialogueTracker, YarnAsset}, prelude::{Statements, Dialogue, parse_yarn_nodes_nom, Branch, Choice, YarnCommand, Commands}};
 
 #[test]
 fn test_evaluate_minimal() {
@@ -129,16 +129,26 @@ fn test_evaluate_branching_nested_multinode(){
     Lamik: hi !
     Dona: good morning , how are you ?
     -> Lamik: are you asking me ?
-       Dona: yes
+        Dona: yes
     -> Lamik: fine !
-       Dona: good to hear
+        Dona: good to hear
     Dona: so... what have you been up to ?
+    -> Lamik: hmmm...
     -> Lamik: i have started working on the most AMAZING project ever !
-       Dona: ohh cool , tell me more !!
+        Dona: ohh cool , tell me more !!
+        -> Lamik: short version then
+            Lamik:  a mechanical bunny of doom !
+        -> Lamik: the long version ? here goes
+            <<jump project_long>>
     -> Lamik: too early to tell
-       Dona: oh ok, well, anyway, gotta go !
+        Dona: oh ok, well, anyway, gotta go !
     Lamik: ok, bye !
     Dona: see you soon !
+    ===
+    title: project_long
+    ---
+    Lamik: so as I was saying, a mechanical bunny of doom ! 
+    Lamik: ... with floppy ears of course
     ===
     ";
 
@@ -215,8 +225,27 @@ fn test_evaluate_branching_nested_multinode(){
     let expected  =  Statements::Choice(Choice { branches: vec![
         Branch {
             statements: vec![
+                Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "hmmm...".into(), ..Default::default() }),
+            ]
+        },
+        Branch {
+            statements: vec![
                 Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "i have started working on the most AMAZING project ever !".into(), ..Default::default() }),
-                Statements::Dialogue(Dialogue { who: "Dona".into(), what: "ohh cool , tell me more !!".into(), ..Default::default() }),
+                Statements::Dialogue(Dialogue { who: "Dona".into(), what: "ohh cool , tell me more !!".into(), ..Default::default() }),      
+                Statements::Choice(Choice { branches: vec![
+                    Branch {
+                        statements: vec![
+                            Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "short version then".into(), ..Default::default() }),
+                            Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "a mechanical bunny of doom !".into(), ..Default::default() }),
+                        ]
+                    }, 
+                    Branch {
+                        statements: vec![
+                            Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "the long version ? here goes".into(), ..Default::default() }),
+                            Statements::Command(YarnCommand { name: "jump".into(), params: "project_long".to_string(), command_type: Commands::Jump, ..Default::default() }),
+                        ]
+                    }
+                ], ..Default::default() } )          
             ]
         }, 
         Branch {
@@ -231,11 +260,14 @@ fn test_evaluate_branching_nested_multinode(){
     // we check our choices helper
     let current_choices = dialogue_tracker.get_current_choices();
     let expected = vec![
+         Dialogue { who: "Lamik".into(), what: "hmmm...".into(), ..Default::default() },
          Dialogue { who: "Lamik".into(), what: "i have started working on the most AMAZING project ever !".into(), ..Default::default() },
          Dialogue { who: "Lamik".into(), what: "too early to tell".into(), ..Default::default() },
     ];
     assert_eq!(current_choices, expected);
 
+    // choose a specific choice (by index)
+    dialogue_tracker.specific_choice(1);
 
     dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
@@ -247,16 +279,50 @@ fn test_evaluate_branching_nested_multinode(){
     let expected  = Statements::Dialogue(Dialogue { who: "Dona".into(), what: "ohh cool , tell me more !!".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
-    
-    // 
+
     dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
-    let expected  = Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "ok, bye !".into(), ..Default::default() });
+    let expected  =  Statements::Choice(Choice { branches: vec![
+        Branch {
+            statements: vec![
+                Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "short version then".into(), ..Default::default() }),
+                Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "a mechanical bunny of doom !".into(), ..Default::default() }),
+            ]
+        }, 
+        Branch {
+            statements: vec![
+                Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "the long version ? here goes".into(), ..Default::default() }),
+                Statements::Command(YarnCommand { name: "jump".into(), params: "project_long".to_string(), command_type: Commands::Jump, ..Default::default() }),
+            ]
+        }
+    ], ..Default::default() } );
+    assert_eq!(current_statement, expected);
+
+     // we check our choices helper
+     let current_choices = dialogue_tracker.get_current_choices();
+     let expected = vec![
+          Dialogue { who: "Lamik".into(), what: "short version then".into(), ..Default::default() },
+          Dialogue { who: "Lamik".into(), what: "the long version ? here goes".into(), ..Default::default() },
+     ];
+     assert_eq!(current_choices, expected);
+    
+    // choose a specific choice (by index)
+    dialogue_tracker.specific_choice(1);
+
+    // validate choice
+    dialogue_tracker.next_entry();
+    let current_statement = dialogue_tracker.current_statement();
+    let expected  = Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "the long version ? here goes".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
     dialogue_tracker.next_entry();
     let current_statement = dialogue_tracker.current_statement();
-    let expected  = Statements::Dialogue(Dialogue { who: "Dona".into(), what: "see you soon !".into(), ..Default::default() });
+    let expected  = Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "so as I was saying, a mechanical bunny of doom ! ".into(), ..Default::default() });
+    assert_eq!(current_statement, expected);
+
+    dialogue_tracker.next_entry();
+    let current_statement = dialogue_tracker.current_statement();
+    let expected  = Statements::Dialogue(Dialogue { who: "Lamik".into(), what: "... with floppy ears of course".into(), ..Default::default() });
     assert_eq!(current_statement, expected);
 
     dialogue_tracker.next_entry();
