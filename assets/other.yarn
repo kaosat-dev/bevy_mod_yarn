@@ -10,6 +10,10 @@ Dona: good morning , how are you ?
 Dona: so... what have you been up to ?
 -> Lamik: i have started working on the most AMAZING project ever !
     Dona: ohh cool , tell me more !!
+    -> Lamik: short version then
+        Lamik:  a mechanical bunny of doom !
+    -> Lamik: the long version ? here goes
+        <<jump project_long>>
 -> Lamik: too early to tell
     Dona: oh ok, well, anyway, gotta go !
 Lamik: ok, bye !
