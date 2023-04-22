@@ -2,14 +2,11 @@ use bevy::prelude::*;
 use bevy_mod_yarn::prelude::*;
 
 
-
-
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugin(YarnPlugin)
         .init_resource::<State>()
-        .add_asset::<YarnAsset>()
-        .init_asset_loader::<YarnAssetLoader>()
         .add_startup_system(setup)
         .add_system(print_on_load )
         .run();

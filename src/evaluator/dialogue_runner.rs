@@ -1,12 +1,10 @@
-use std::collections::HashMap;
+use bevy::ecs::component::Component;
+// use bevy::ecs::system::Resource;
 
-use crate::prelude::{Branch, Statements, Dialogue, YarnNode, Commands, YarnAsset};
-
-// FIXME: temporary mock of Yarnasset
-
+use crate::prelude::{Branch, Statements, Dialogue, Commands, YarnAsset};
 
 
-#[derive(Debug)] // FIXME: the only needed dependency from bevy is the Component trait
+#[derive(Debug, Component)]
 pub struct DialogueRunner<'a>{
     /// what yarn script are we using for this dialogue tracker
     pub yarn_asset:  Option<&'a YarnAsset>,
@@ -51,7 +49,6 @@ impl DialogueRunner<'_>  {
         }
     }
 
-    // FIXME: add this back once we have added bevy as a dependency and added yarn_loader
     pub fn set_current_branch(&mut self, yarn_asset: &YarnAsset) {
         //let default = &yarn_asset.nodes[&self.current_node_name];
         self.current_branch = yarn_asset.nodes[&self.current_node_name].branch.clone(); // FIXME: self.current_node_name might not be set correcly, add safeguard
