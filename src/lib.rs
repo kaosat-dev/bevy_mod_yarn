@@ -18,7 +18,7 @@ pub mod prelude {
             statement_command
         },
         evaluator::{
-            dialogue_tracker::*
+            dialogue_runner::*
         }
 
     };

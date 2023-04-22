@@ -7,7 +7,7 @@ use crate::prelude::{Branch, Statements, Dialogue, YarnNode, Commands, YarnAsset
 
 
 #[derive(Debug)] // FIXME: the only needed dependency from bevy is the Component trait
-pub struct DialogueTracker<'a>{
+pub struct DialogueRunner<'a>{
     /// what yarn script are we using for this dialogue tracker
     pub yarn_asset:  Option<&'a YarnAsset>,
     pub current_node_name: String,
@@ -20,10 +20,10 @@ pub struct DialogueTracker<'a>{
     indices_stack: Vec<(usize, usize)> // we want to resume where we where
 }
 
-impl Default for DialogueTracker<'_> {
+impl Default for DialogueRunner<'_> {
     fn default() -> Self { 
       
-        DialogueTracker { 
+        DialogueRunner { 
             yarn_asset: None, 
             current_node_name: "".into(), 
             current_statement_index: 0, 
@@ -37,9 +37,9 @@ impl Default for DialogueTracker<'_> {
 
 }
 
-impl DialogueTracker<'_>  {
-    pub fn new(yarn_asset: &YarnAsset, start_node_name: String) -> DialogueTracker {
-        DialogueTracker {
+impl DialogueRunner<'_>  {
+    pub fn new(yarn_asset: &YarnAsset, start_node_name: String) -> DialogueRunner {
+        DialogueRunner {
             yarn_asset: Some(yarn_asset),
             current_node_name: start_node_name.clone(),
             current_statement_index: 0,
