@@ -4,10 +4,13 @@
 - [ ] add plugin 
     possibly plugins ? (ie to split parsing from runner )
 - [ ] rename parse_yarn_nodes_nom to something more adapted & nicer
+- [ ] change "Commands" to YarnCommands, as it otherwise clashes with bevy's Commands
+- for choices, perhaps return the current choice index together with the list of choices from get_current_choices
+- error handling if start node name is not found
 - [ ] add examples
-    - [ ] two characters (player + 1)
+    - [x] two characters (player + 1)
         - very simple display/ui
-    - [ ] speech bubble
+    - [ ] speech bubbles, multiple characters
 
 - [ ] add basic useage docs
 
@@ -23,6 +26,9 @@
             -> loaders load an AudioSource , just a struct with TypeUuid like our yarn_asset https://github.com/NiklasEi/bevy_kira_audio/blob/main/src/source/mp3_loader.rs https://github.com/NiklasEi/bevy_kira_audio/blob/main/src/source/mod.rs#L20
             -> then there are audiochannels (a RESOURCE with an api)
             https://github.com/NiklasEi/bevy_kira_audio/blob/main/src/channel/typed.rs#L20
+- [ ] default to first node in yarn file if no start node is specified ?
+
+
 - [x] basic nodes parsing (header + body)
 - [ ] details
     - [x] dialogues: with or without character names
