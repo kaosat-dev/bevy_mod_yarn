@@ -1,14 +1,15 @@
 use bevy::ecs::component::Component;
-// use bevy::ecs::system::Resource;
+use bevy::ecs::system::Resource;
 use bevy::asset::Handle;
-use bevy::log::error;
+use bevy::asset::HandleId;
+
 use crate::prelude::{Branch, Statements, Dialogue, Commands, YarnAsset};
 
 
-#[derive(Debug, Component)]
+#[derive(Debug, Resource)]
 pub struct DialogueRunner{
     /// what yarn script are we using for this dialogue tracker
-    pub yarn_asset:  Option<YarnAsset>,
+    pub yarn_asset:  Handle<YarnAsset>,//Option<&'a YarnAsset>,
     pub current_node_name: String,
     pub current_statement_index: usize,
     pub current_choice_index: usize,
@@ -19,7 +20,7 @@ pub struct DialogueRunner{
     indices_stack: Vec<(usize, usize)> // we want to resume where we where
 }
 
-impl Default for DialogueRunner {
+/*impl Default for DialogueRunner {
     fn default() -> Self { 
       
         DialogueRunner { 
@@ -34,18 +35,13 @@ impl Default for DialogueRunner {
         }
      }
 
-}
+}*/
 
-impl DialogueRunner {
-    pub fn new(yarn_asset: YarnAsset, start_node_name: &str) -> DialogueRunner {
-        let start_node_name = &start_node_name.clone().to_string();
-        let current_branch: Branch = Branch { statements: vec![] }; // to handle case where there is no matching start node ?
-        if !yarn_asset.nodes.contains_key(start_node_name) {
-            error!("yarn file does not contain node {:?}", start_node_name)
-        }
-        
+impl DialogueRunner  {
+    pub fn new(yarn_asset: Handle<YarnAsset>, start_node_name: String) -> DialogueRunner {
+        // yarn_asset.
         DialogueRunner {
-            yarn_asset: Some(yarn_asset.clone()),
+            yarn_asset: Some(yarn_asset),
             current_node_name: start_node_name.clone(),
             current_statement_index: 0,
             current_choice_index: 0 ,
@@ -56,10 +52,15 @@ impl DialogueRunner {
         }
     }
 
+    /*pub fn start(dialogue_source: Handle<YarnAsset>, start_node_name: String) -> DialogueRunner {
+
+    }*/
+
+    /* TODO: repurpose this as 'start' ?
     pub fn set_current_branch(&mut self, yarn_asset: &YarnAsset) {
         //let default = &yarn_asset.nodes[&self.current_node_name];
         self.current_branch = yarn_asset.nodes[&self.current_node_name].branch.clone(); // FIXME: self.current_node_name might not be set correcly, add safeguard
-    }
+    }*/
 
     pub fn current_statement(&self) -> Statements {
         let current_statement = self.current_branch.statements[self.current_statement_index].clone();
@@ -74,8 +75,8 @@ impl DialogueRunner {
             // FIXME: not graceful at all !!
             panic!("no yarn asset for this dialogue runner")
         }
-        let yarn_asset = self.yarn_asset.as_mut().unwrap();
-        // println!("next entry");
+        let yarn_asset = self.yarn_asset.unwrap();
+        println!("next entry");
         //FIXME yuck
         // this is to deal with choices
         let old_entry = self.current_branch.statements[self.current_statement_index].clone();
@@ -109,7 +110,7 @@ impl DialogueRunner {
             }
         }
         let current_entry = self.current_branch.statements[self.current_statement_index].clone();
-        // println!("current entry {:?}",current_entry);
+        println!("current entry {:?}",current_entry);
         match  current_entry {
             Statements::Command(command) => {
                 println!("EXECUTE COMMAND {:?}", command);
@@ -142,7 +143,7 @@ impl DialogueRunner {
                 return  current_entry;
             },
             _=> {
-                // println!("line");
+                println!("line");
                 return  current_entry;
             }
         }

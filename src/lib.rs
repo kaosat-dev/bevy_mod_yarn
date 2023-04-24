@@ -9,6 +9,8 @@ mod yarn_loader;
 use bevy::prelude::{
     App,Plugin, AddAsset
 };
+use bevy::ecs::system::Resource;
+
 pub use yarn_asset::YarnAsset;
 pub use yarn_loader::YarnAssetLoader;
 pub use evaluator::DialogueRunner;
@@ -33,7 +35,7 @@ pub use evaluator::DialogueRunner;
 /// }
 ///
 /// fn start_dialogue(asset_server: Res<AssetServer>, dialogue: Res<DialogueRunner>) {
-///     dialogue.next(asset_server.load("hello_world.yarn"));
+///     dialogue.start(asset_server.load("hello_world.yarn"));
 /// }
 ///
 /// ```
@@ -78,3 +80,19 @@ pub mod prelude {
     pub use crate::{YarnPlugin};
 
 }
+
+
+
+/// The default yarn channel
+///
+/// Alias for the [`AudioChannel<MainTrack>`] resource. Use it to play and control sound on the main track.
+/// You can add your own channels via [`add_audio_channel`](AudioApp::add_audio_channel).
+// pub type DialogueRunner = DialogueRunner<MainYarn>;
+
+#[derive(Resource)]
+pub struct MainYarn;
+
+
+#[doc = include_str!("../README.md")]
+#[cfg(doctest)]
+struct ReadmeDoctests;

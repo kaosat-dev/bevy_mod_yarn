@@ -1,16 +1,9 @@
-use std::collections::HashMap;
 use bevy::{
     asset::{AssetLoader, LoadContext, LoadedAsset},
-    prelude::*,
-    reflect::TypeUuid,
     utils::{BoxedFuture},
 };
 
-use crate::{prelude::{YarnNode, parse_yarn_nodes_nom, YarnAsset}};
-//use serde::Deserialize;
-
-// use crate::gameplay::{YarnNode, parse_yarn_nodes_naive};
-
+use crate::{prelude::{parse_yarn_nodes_nom, YarnAsset}};
 
 #[derive(Default)]
 pub struct YarnAssetLoader;
