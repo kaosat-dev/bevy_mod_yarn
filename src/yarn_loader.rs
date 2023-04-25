@@ -3,7 +3,7 @@ use bevy::{
     utils::{BoxedFuture},
 };
 
-use crate::{prelude::{parse_yarn_nodes_nom, YarnAsset}};
+use crate::{prelude::{parse_yarn_nodes, YarnAsset}};
 
 #[derive(Default)]
 pub struct YarnAssetLoader;
@@ -17,7 +17,7 @@ impl AssetLoader for YarnAssetLoader {
         Box::pin(async move {
             let data_str = std::str::from_utf8(bytes)?;
             let asset = YarnAsset {
-                nodes: parse_yarn_nodes_nom(data_str),
+                nodes: parse_yarn_nodes(data_str),
                 raw: data_str.into()
             };
             load_context.set_default_asset(LoadedAsset::new(asset));

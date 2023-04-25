@@ -219,11 +219,11 @@ impl DialogueRunner {
 
     /// helper function for choices: gives you a list of dialogues (ie, who, what), for example when
     /// you want to display the list current choices to the player 
-    pub fn get_current_choices (&self) -> Vec<Dialogue> {
-        let current_statement_index = self.current_statement();
-        match current_statement_index {
+    pub fn get_current_choices (&self) -> (Vec<Dialogue>, usize) {
+        let current_statement = self.current_statement();
+        match current_statement {
             Statements::Choice(ref choice) => {
-                return choice.branches
+                return (choice.branches
                     .iter()
                     .map(|branch| {
                         let first = &branch.statements[0];
@@ -235,10 +235,10 @@ impl DialogueRunner {
                                 return Dialogue{..Default::default()}
                             }
                         }
-                    }).collect();
+                    }).collect(), self.current_choice_index);
             },
             _=> {
-                return vec![];
+                return (vec![], self.current_choice_index);
             } 
         }
     }

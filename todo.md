@@ -3,9 +3,9 @@
 
 - [ ] add plugin 
     possibly plugins ? (ie to split parsing from runner )
-- [ ] rename parse_yarn_nodes_nom to something more adapted & nicer
+- [x] rename parse_yarn_nodes_nom to something more adapted & nicer
 - [ ] change "Commands" to YarnCommands, as it otherwise clashes with bevy's Commands
-- for choices, perhaps return the current choice index together with the list of choices from get_current_choices
+- [x] for choices, perhaps return the current choice index together with the list of choices from get_current_choices
 - error handling if start node name is not found
 - [ ] add examples
     - [x] two characters (player + 1)

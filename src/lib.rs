@@ -68,7 +68,7 @@ pub mod prelude {
         yarn_loader::YarnAssetLoader,
         parser::{
             structs::*,
-            parse_yarn_nodes_nom,
+            parse_yarn_nodes,
             statement_dialogue,
             statement_choice,
             statement_command

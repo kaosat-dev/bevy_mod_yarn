@@ -4,7 +4,7 @@ mod parser;
 
 use bevy_mod_yarn::parser::interpolated_value;
 
-use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
+use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, header, parse_yarn_nodes, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
 
 fn main() {
     /*println!("title {:?}",title("title: Start\n"));
@@ -246,7 +246,7 @@ position: 567,-265
 
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
-    let parsed = parse_yarn_nodes_nom(&contents);
+    let parsed = parse_yarn_nodes(&contents);
     for (_node_name, node) in parsed.iter() {
         println!("NODE({}):", node.title);
         println!("  Statements tree");
@@ -257,7 +257,7 @@ position: 567,-265
     println!("indentation return");
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
-    let parsed = parse_yarn_nodes_nom(&contents);
+    let parsed = parse_yarn_nodes(&contents);
     for (_node_name, node) in parsed.iter() {
         println!("NODE({}):", node.title);
         println!("  Statements tree");
@@ -268,7 +268,7 @@ position: 567,-265
     println!("COMPLEX");
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
-    let parsed = parse_yarn_nodes_nom(&contents);
+    let parsed = parse_yarn_nodes(&contents);
     for (_node_name, node) in parsed.iter() {
         println!("NODE({}):", node.title);
         println!("  Statements tree");

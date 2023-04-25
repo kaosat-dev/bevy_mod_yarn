@@ -17,7 +17,7 @@ pub use structs::*;
 
 
 ///main entry point
-pub fn parse_yarn_nodes_nom(yarn_text: &str) -> HashMap<String, YarnNode> {
+pub fn parse_yarn_nodes(yarn_text: &str) -> HashMap<String, YarnNode> {
     println!("PARSING WITH NOM");
     if let Ok(result) = yarn_nodes(yarn_text) {
         return result.1;

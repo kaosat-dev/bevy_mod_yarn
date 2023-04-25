@@ -98,9 +98,9 @@ fn dialogue_display(
                 text.push_str(&format!("{:?}: {:?}\n", dialogue.who, dialogue.what));
             }
             Statements::Choice(_) => {
-                let choices = runner.get_current_choices();
+                let (choices, current_choice_index) = runner.get_current_choices();
                 for (index, dialogue) in choices.iter().enumerate(){
-                    if index == runner.current_choice_index{
+                    if index == current_choice_index{
                         text.push_str(&format!("--> {:?}: {:?}\n", dialogue.who, dialogue.what));
                     }else {
                         text.push_str(&format!("{:?}: {:?}\n", dialogue.who, dialogue.what));
@@ -108,7 +108,7 @@ fn dialogue_display(
                 }
             }
             Statements::Exit => {
-                text.push_str("the end!");
+                text.push_str("end of the node!");
             }
             _ => {
                 
