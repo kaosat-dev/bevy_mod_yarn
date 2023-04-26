@@ -15,7 +15,10 @@ bevy = { version = "0.10.1", default-features = false, features = ["bevy_asset"]
 [dev-dependencies]
 bevy="0.10.1"
 
-
 [[example]]
 name = "basic"
 path = "examples/basic/basic.rs"
+
+[[example]]
+name = "portraits"
+path = "examples/portraits/portraits.rs"
