@@ -76,7 +76,7 @@ impl DialogueRunner {
         }
         let yarn_asset = self.yarn_asset.as_mut().unwrap();
         // println!("next entry");
-        //FIXME yuck
+        //FIXME yuck: not an ideal way to deal with choice selection
         // this is to deal with choices
         let old_entry = self.current_branch.statements[self.current_statement_index].clone();
         match  old_entry {
@@ -91,22 +91,26 @@ impl DialogueRunner {
                 return self.current_branch.statements[self.current_statement_index].clone();
             },
             Statements::Exit => {
-                println!("dialogues done")
+                println!("dialogues done");
+                return Statements::Exit
             },
             _=> {}
         }
 
         if self.current_statement_index + 1 < self.current_branch.statements.len() {
-            self.current_statement_index +=1;
+            self.current_statement_index += 1;
         }
         else { 
-            println!("last in current branch reached");
-            if self.branches_stack.len() > 0 {
+
+            // FIXME: not super clean way to pop until empty/ back in a normal flow
+            while self.current_statement_index <=  self.current_branch.statements.len() &&  self.branches_stack.len() > 0  {
                 self.current_branch = self.branches_stack.pop().unwrap();
                 let (choice_index, statement_index) = self.indices_stack.pop().unwrap();
                 self.current_choice_index = 0; // reset choice to first choice
                 self.current_statement_index = statement_index + 1 ; // FIXME: check if this is a valid statement !!
             }
+          
+          
         }
         let current_entry = self.current_branch.statements[self.current_statement_index].clone();
         // println!("current entry {:?}",current_entry);

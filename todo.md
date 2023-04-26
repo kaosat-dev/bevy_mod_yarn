@@ -1,18 +1,21 @@
 
 ## Initial release
 
-- [ ] add plugin 
+- [x] add plugin 
     possibly plugins ? (ie to split parsing from runner )
 - [x] rename parse_yarn_nodes_nom to something more adapted & nicer
 - [ ] change "Commands" to YarnCommands, as it otherwise clashes with bevy's Commands
 - [x] for choices, perhaps return the current choice index together with the list of choices from get_current_choices
 - error handling if start node name is not found
+- [x] fix issue with nested choices in runner
 - [ ] add examples
     - [x] two characters (player + 1)
         - very simple display/ui
-    - [ ] speech bubbles, multiple characters
+    - [x] rpg style changing portraits
+    - [ ] speech bubbles, multiple characters (3d)
 
 - [ ] add basic useage docs
+- [ ] auto linefeed ? (ui specific)
 
 ## General
 
@@ -28,6 +31,7 @@
             https://github.com/NiklasEi/bevy_kira_audio/blob/main/src/channel/typed.rs#L20
 - [ ] default to first node in yarn file if no start node is specified ?
 
+- [ ] accessibility features how to? screen readers etc
 
 - [x] basic nodes parsing (header + body)
 - [ ] details

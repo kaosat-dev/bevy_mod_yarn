@@ -246,9 +246,6 @@ fn dialogue_display(
             Statements::Exit => {
                 text.push_str("end of the node! (Exit)");
             },
-            Statements::End => {
-                text.push_str("end of the dialogue!");
-            }
             _ => {
                 
             }
