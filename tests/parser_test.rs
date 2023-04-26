@@ -29,7 +29,7 @@ fn test_parse_minimal() {
              ..Default::default()
         })
         ;
-    assert_eq!(parse_yarn_nodes_nom(micro), expected);
+    assert_eq!(parse_yarn_nodes(micro), expected);
 
     // assert_eq!(yarn_commands("<<stop>>"), Ok(("", vec!["stop"])));
     // assert_eq!(yarn_commands("<<say hello>>"), Ok(("", vec!["say", "hello"])));
@@ -84,7 +84,7 @@ fn test_branching_basic_whiteline_seperator(){
              ..Default::default()
         })
         ;
-    assert_eq!(parse_yarn_nodes_nom(choices), expected);
+    assert_eq!(parse_yarn_nodes(choices), expected);
 }
 
 #[test]
@@ -134,7 +134,7 @@ fn test_branching_basic_eof_seperator(){
              ..Default::default()
         })
         ;
-    assert_eq!(parse_yarn_nodes_nom(choices), expected);
+    assert_eq!(parse_yarn_nodes(choices), expected);
 }
 
 
@@ -193,7 +193,7 @@ fn test_branching_basic_eof_seperator_lines_at_root_and_commands(){
              ..Default::default()
         })
         ;
-    assert_eq!(parse_yarn_nodes_nom(choices), expected);
+    assert_eq!(parse_yarn_nodes(choices), expected);
 }
 
 
@@ -251,5 +251,5 @@ it was a beautiful day , said nobody
              ..Default::default()
         })
         ;
-    assert_eq!(parse_yarn_nodes_nom(choices), expected);
+    assert_eq!(parse_yarn_nodes(choices), expected);
 }

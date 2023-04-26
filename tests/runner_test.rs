@@ -1,4 +1,4 @@
-use bevy_mod_yarn::{ prelude::{Statements, Dialogue, parse_yarn_nodes_nom, Branch, Choice, YarnCommand, Commands, YarnAsset, DialogueRunner}};
+use bevy_mod_yarn::{ prelude::{Statements, Dialogue, parse_yarn_nodes, Branch, Choice, YarnCommand, Commands, YarnAsset, DialogueRunner}};
 
 #[test]
 fn test_evaluate_minimal() {
@@ -9,14 +9,14 @@ fn test_evaluate_minimal() {
     ===
     ";
 
-    let parsed = parse_yarn_nodes_nom(micro);
+    let parsed = parse_yarn_nodes(micro);
     let yarn_asset = YarnAsset {
         raw: micro.into(),
         nodes: parsed
     };
 
-    let mut dialogue_runner = DialogueRunner::new(&yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
-    // dialogue_runner.set_current_branch(&yarn_asset);
+    let mut dialogue_runner = DialogueRunner::new(yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
+    // dialogue_runner.set_current_branch(yarn_asset);
 
     let current_statement = dialogue_runner.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "Dona".into(), what: "what is wrong ?".into(), ..Default::default() });
@@ -52,14 +52,14 @@ fn test_evaluate_branching_basic(){
     ===
     ";
 
-    let parsed = parse_yarn_nodes_nom(choices);
+    let parsed = parse_yarn_nodes(choices);
     let yarn_asset = YarnAsset {
         raw: choices.into(),
         nodes: parsed
     };
 
-    let mut dialogue_runner = DialogueRunner::new(&yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
-    // dialogue_runner.set_current_branch(&yarn_asset);
+    let mut dialogue_runner = DialogueRunner::new(yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
+    // dialogue_runner.set_current_branch(yarn_asset);
 
     let current_statement = dialogue_runner.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "nobody".into(), what: "it was a beautiful day , said nobody".into(), ..Default::default() });
@@ -94,7 +94,7 @@ fn test_evaluate_branching_basic(){
     assert_eq!(current_statement, expected);
 
     // we check our choices helper
-    let current_choices = dialogue_runner.get_current_choices();
+    let (current_choices, _choice_index) = dialogue_runner.get_current_choices();
     let expected = vec![
         Dialogue { who: "Lamik".into(), what: "are you asking me ?".into(), ..Default::default() },
         Dialogue { who: "Lamik".into(), what: "fine !".into(), ..Default::default() },
@@ -152,14 +152,14 @@ fn test_evaluate_branching_nested_multinode(){
     ===
     ";
 
-    let parsed = parse_yarn_nodes_nom(choices);
+    let parsed = parse_yarn_nodes(choices);
     let yarn_asset = YarnAsset {
         raw: choices.into(),
         nodes: parsed
     };
 
-    let mut dialogue_runner = DialogueRunner::new(&yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
-    // dialogue_runner.set_current_branch(&yarn_asset);
+    let mut dialogue_runner = DialogueRunner::new(yarn_asset, "Test_node".into());//{ current_node: "Test_node".into(), ..Default::default() };
+    // dialogue_runner.set_current_branch(yarn_asset);
 
     let current_statement = dialogue_runner.current_statement();
     let expected  = Statements::Dialogue(Dialogue { who: "nobody".into(), what: "it was a beautiful day , said nobody".into(), ..Default::default() });
@@ -194,7 +194,7 @@ fn test_evaluate_branching_nested_multinode(){
     assert_eq!(current_statement, expected);
 
     // we check our choices helper
-    let current_choices = dialogue_runner.get_current_choices();
+    let (current_choices, _choice_index) = dialogue_runner.get_current_choices();
     let expected = vec![
         Dialogue { who: "Lamik".into(), what: "are you asking me ?".into(), ..Default::default() },
         Dialogue { who: "Lamik".into(), what: "fine !".into(), ..Default::default() },
@@ -258,7 +258,7 @@ fn test_evaluate_branching_nested_multinode(){
     assert_eq!(current_statement, expected);
 
     // we check our choices helper
-    let current_choices = dialogue_runner.get_current_choices();
+    let (current_choices, _choice_index) = dialogue_runner.get_current_choices();
     let expected = vec![
          Dialogue { who: "Lamik".into(), what: "hmmm...".into(), ..Default::default() },
          Dialogue { who: "Lamik".into(), what: "i have started working on the most AMAZING project ever !".into(), ..Default::default() },
@@ -299,7 +299,7 @@ fn test_evaluate_branching_nested_multinode(){
     assert_eq!(current_statement, expected);
 
      // we check our choices helper
-     let current_choices = dialogue_runner.get_current_choices();
+     let  (current_choices, _choice_index) = dialogue_runner.get_current_choices();
      let expected = vec![
           Dialogue { who: "Lamik".into(), what: "short version then".into(), ..Default::default() },
           Dialogue { who: "Lamik".into(), what: "the long version ? here goes".into(), ..Default::default() },
