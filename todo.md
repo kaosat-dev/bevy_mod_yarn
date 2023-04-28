@@ -12,7 +12,9 @@
     - [x] two characters (player + 1)
         - very simple display/ui
     - [x] rpg style changing portraits
-    - [ ] speech bubbles, multiple characters (3d)
+    - [x] speech bubbles, multiple characters (3d)
+
+    - [ ] first two examples should use camera2D
     - [ ] examples should provide at least some command use
 
 - [ ] add basic useage docs

@@ -22,3 +22,8 @@ path = "examples/basic/basic.rs"
 [[example]]
 name = "portraits"
 path = "examples/portraits/portraits.rs"
+
+
+[[example]]
+name = "bubbles"
+path = "examples/bubbles/bubbles.rs"
