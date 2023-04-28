@@ -56,8 +56,11 @@ fn setup(
 ) {
     // load the yarn file
     state.handle = asset_server.load("dialogues/two_nodes_jump_nested_choices.yarn");
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 0.0, 5.0).looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
+
+
+    // setup a simple 2d camera
+    commands.spawn(Camera2dBundle {
+        transform: Transform::from_xyz(0.0, 5.0, 0.0),
         ..default()
     });
 
@@ -111,10 +114,6 @@ fn setup(
     commands
         .spawn(NodeBundle {
             style: Style {
-                // size: Size::width(Val::Percent(100.)),
-                // position_type: PositionType::Absolute,
-                // justify_content: JustifyContent::Center,
-                // align_items: AlignItems::FlexStart,
                 position_type: PositionType::Absolute,
                 position: UiRect {
                 bottom: Val::Px(10.0),
@@ -244,7 +243,7 @@ fn dialogue_display(
                 }
             }
             Statements::Exit => {
-                text.push_str("end of the node! (Exit)");
+                text.push_str("end of the dialogue! (Exit)");
             },
             _ => {
                 

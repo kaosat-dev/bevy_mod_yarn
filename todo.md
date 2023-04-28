@@ -14,9 +14,10 @@
     - [x] rpg style changing portraits
     - [x] speech bubbles, multiple characters (3d)
 
-    - [ ] first two examples should use camera2D
+    - [x] first two examples should use camera2D
     - [ ] examples should provide at least some command use
-
+- [ ] fix command handling
+    - [ ] fix command parsing : should dotted parameters be allowed? ie "file.ogg" for example
 - [ ] add basic useage docs
 - [ ] auto linefeed ? (ui specific)
 

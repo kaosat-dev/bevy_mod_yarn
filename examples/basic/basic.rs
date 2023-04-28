@@ -27,11 +27,14 @@ fn setup(
     mut commands: bevy::prelude::Commands
 ) {
     // load the yarn dialogue file
-    state.handle = asset_server.load("dialogues/single_node_simple_commands.yarn");
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 0.0, 5.0).looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
+    state.handle = asset_server.load("dialogues/single_node_simple.yarn");
+    
+    // setup a simple 2d camera
+    commands.spawn(Camera2dBundle {
+        transform: Transform::from_xyz(0.0, 5.0, 0.0),
         ..default()
     });
+
     commands.spawn(
         TextBundle::from_section(
             "",
@@ -108,7 +111,7 @@ fn dialogue_display(
                 }
             }
             Statements::Exit => {
-                text.push_str("end of the dialogue!");
+                text.push_str("end of the dialogue! (Exit)");
             }
             _ => {
                 
