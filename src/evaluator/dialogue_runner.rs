@@ -39,9 +39,9 @@ impl Default for DialogueRunner {
 impl DialogueRunner {
     pub fn new(yarn_asset: YarnAsset, start_node_name: &str) -> DialogueRunner {
         let start_node_name = &start_node_name.clone().to_string();
-        let current_branch: Branch = Branch { statements: vec![] }; // to handle case where there is no matching start node ?
+        // let current_branch: Branch = Branch { statements: vec![] }; // to handle case where there is no matching start node ?
         if !yarn_asset.nodes.contains_key(start_node_name) {
-            error!("yarn file does not contain node {:?}", start_node_name)
+            panic!("yarn file does not contain node {:?}", start_node_name)
         }
         
         DialogueRunner {
@@ -71,15 +71,15 @@ impl DialogueRunner {
     /// TODO: this should either return an Option<Statement> or another error signifier (ie for example if there is no node for jumping etc)
     pub fn next_entry(&mut self) -> Statements {
         if self.yarn_asset.is_none() {
-            // FIXME: not graceful at all !!
             panic!("no yarn asset for this dialogue runner")
         }
         let yarn_asset = self.yarn_asset.as_mut().unwrap();
         // println!("next entry");
+
         //FIXME yuck: not an ideal way to deal with choice selection
         // this is to deal with choices
-        let old_entry = self.current_branch.statements[self.current_statement_index].clone();
-        match  old_entry {
+        let current_entry = self.current_branch.statements[self.current_statement_index].clone();
+        match current_entry {
             Statements::Choice(ref choice) => {
                 println!("choice");
                 self.branches_stack.push(self.current_branch.clone());
@@ -101,7 +101,6 @@ impl DialogueRunner {
             self.current_statement_index += 1;
         }
         else { 
-
             // FIXME: not super clean way to pop until empty/ back in a normal flow
             while self.current_statement_index <=  self.current_branch.statements.len() &&  self.branches_stack.len() > 0  {
                 self.current_branch = self.branches_stack.pop().unwrap();
@@ -109,15 +108,29 @@ impl DialogueRunner {
                 self.current_choice_index = 0; // reset choice to first choice
                 self.current_statement_index = statement_index + 1 ; // FIXME: check if this is a valid statement !!
             }
-          
-          
         }
         let current_entry = self.current_branch.statements[self.current_statement_index].clone();
-        // println!("current entry {:?}",current_entry);
-        match  current_entry {
+        
+        match current_entry {
             Statements::Command(command) => {
-                println!("EXECUTE COMMAND {:?}", command);
                 match command.command_type {
+                    Commands::Declare => {
+                        // TODO: remove duplicate code 
+                        // TODO: implement
+
+                        if self.current_statement_index + 1 < self.current_branch.statements.len() {
+                            self.current_statement_index += 1;
+                        }
+                        return self.current_branch.statements[self.current_statement_index].clone();
+                    }
+                    Commands::Set => {
+                        // TODO: remove duplicate code 
+                        // TODO: implement
+                        if self.current_statement_index + 1 < self.current_branch.statements.len() {
+                            self.current_statement_index += 1;
+                        }
+                        return self.current_branch.statements[self.current_statement_index].clone();
+                    }
                     Commands::Jump => {
                         if yarn_asset.nodes.contains_key(&command.params){
                             // we jump to the other named node and return the first item from there
@@ -126,30 +139,26 @@ impl DialogueRunner {
                             self.current_choice_index = 0;
                             self.current_node_name = command.params.clone();
                             self.current_branch = yarn_asset.nodes[&self.current_node_name].branch.clone();
-                        
                             return self.current_branch.statements[self.current_statement_index].clone();
                         }else {
-                            println!("no node named {} found in the yarn file", &command.params);
-                            return self.next_entry();
+                            panic!("no node named {} found in the yarn file!", &command.params);
                         }
                     }
+                    Commands::Stop => {
+                        // TODO: remove duplicate code 
+                       return Statements::Exit
+                    }
                     _=> {
-                        return self.next_entry();
+                        // for any non internal / Generic command, you need to handle going to the next entry yourself by calling runner.next_entry() 
+                        return self.current_branch.statements[self.current_statement_index].clone();
                     }
                 }        
             },
-            Statements::Choice(ref choices) => {
-                println!("choice");
-                // self.current_branch = choices[self.current_choice_index].clone();
-                // self.current_choice_index = 0;
-                // here we select the current choice: FIXME: should it be explictely another , seperate command ? like "validate choice ??"
-                return  current_entry;
-            },
             _=> {
-                // println!("line");
-                return  current_entry;
+                return current_entry;
             }
         }
+        
     }
 
     /// go to the next choice, goes to 0 when overflowing
