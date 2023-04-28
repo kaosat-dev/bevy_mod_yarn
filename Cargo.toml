@@ -20,6 +20,10 @@ name = "basic"
 path = "examples/basic/basic.rs"
 
 [[example]]
+name = "commands"
+path = "examples/basic/commands.rs"
+
+[[example]]
 name = "portraits"
 path = "examples/portraits/portraits.rs"
 
