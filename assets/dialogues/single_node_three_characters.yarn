@@ -1,0 +1,25 @@
+title: Start
+tags: #test_tag othertag
+colorID: 1
+position: 301,-291
+---
+Lamik: Hi folks !
+Dona: Hi Lamik !
+Blob: Heyyas !
+Dona: how are you doing ?
+ ->Lamik: fine fine and you ?
+ ->Lamik: meh
+Blob: so shall we get something to eat ?
+Dona: good idea Blob! I am starving !
+-> Lamik: me too !
+    Dona: I heard there is a new abysall horror sushi place in town !
+    Blob: ooh sounds just like my thing 
+    Lamik: yess !! 
+    Lamik: Nothing beats screaming unameable horrors on your plate !
+    Dona: :) 
+    Blob: let's go !
+-> Lamik: not really hungry...
+    Dona: come on, I am sure you will be hungry by the time we get there
+    Blob: yeah , Lamik, it's been so long since we last ate together
+    Lamik: hmm ok then, you got me convinced !
+===

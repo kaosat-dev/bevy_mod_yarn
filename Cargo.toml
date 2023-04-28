@@ -3,8 +3,28 @@ name = "bevy_mod_yarn"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 nom = "7.1.2"
 nom-supreme = "0.8.0"
+bevy = { version = "0.10.1", default-features = false, features = ["bevy_asset"] }
+
+[dev-dependencies]
+bevy="0.10.1"
+
+[[example]]
+name = "basic"
+path = "examples/basic/basic.rs"
+
+[[example]]
+name = "commands"
+path = "examples/basic/commands.rs"
+
+[[example]]
+name = "portraits"
+path = "examples/portraits/portraits.rs"
+
+
+[[example]]
+name = "bubbles"
+path = "examples/bubbles/bubbles.rs"

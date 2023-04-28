@@ -1,0 +1,26 @@
+title: Test_node
+---
+it was a beautiful day , said nobody
+Lamik: hi !
+Dona: good morning , how are you ?
+-> Lamik: are you asking me ?
+    Dona: yes
+-> Lamik: fine !
+    Dona: good to hear
+Dona: so... what have you been up to ?
+-> Lamik: i have started working on the most AMAZING project ever !
+    Dona: ohh cool , tell me more !!
+    -> Lamik: short version then
+        Lamik:  a mechanical bunny of doom !
+    -> Lamik: the long version ? here goes
+        <<jump project_long>>
+-> Lamik: too early to tell
+    Dona: oh ok, well, anyway, gotta go !
+Lamik: ok, bye !
+Dona: see you soon !
+===
+title: project_long
+---
+Lamik: so as I was saying, a mechanical bunny of doom ! 
+Lamik: ... with floppy ears of course
+===

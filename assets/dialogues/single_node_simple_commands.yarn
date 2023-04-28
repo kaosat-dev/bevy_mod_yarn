@@ -1,0 +1,10 @@
+title: Start
+---
+<<play_audio doorOpen_1>>
+Lamik: hi !
+Dona: hi there Lamik !
+<<play_audio mixkit_ambient_sound_in_the_desert_2488>>
+Dona: oh, sorry , could you please close the door, it is very windy outside.
+Lamik: yes, of course !
+<<play_audio doorClose_1>>
+===

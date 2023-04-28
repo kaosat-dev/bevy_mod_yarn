@@ -1,18 +1,15 @@
 use nom::{
-    bytes::complete::{tag, is_not, take_till, take_until, tag_no_case},
+    bytes::complete::{tag, take_until, tag_no_case},
     branch::alt,
-    error::ParseError,
     
-    IResult, multi::{separated_list1, many0_count, many0, separated_list0, many1}, 
-    character::complete::{newline, alphanumeric0, anychar, alpha1, alphanumeric1, multispace0, space0, digit0, one_of, char, not_line_ending}, 
-    sequence::{delimited, preceded, terminated, pair, separated_pair, tuple, }, 
-    combinator::{recognize, opt, not}, 
-    InputTakeAtPosition,
-    number::complete::{float, recognize_float}
+    IResult, multi::{separated_list1, many0_count, many0}, 
+    character::complete::{newline, alpha1, alphanumeric1, not_line_ending}, 
+    sequence::{ pair, tuple, }, 
+    combinator::{recognize}, 
 };
 
 
-use super::{identifier, spacey, tag_identifier, body::till_end};
+use super::{identifier, spacey, body::till_end};
 
 /// called header tags in the yarn spec , but that is confusing
 #[derive(Debug, Clone)]

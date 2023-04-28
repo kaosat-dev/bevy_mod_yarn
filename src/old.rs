@@ -1,13 +1,14 @@
-use std::{fs};
+// TODO: testbed, remove later
+use std::{fs, collections::HashMap};
 
 mod parser;
 
-pub mod structs;
-pub use structs::*;
-use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, hex_color_final, parse_all_yeah, parse_all_yarn, header, parse_yarn_nodes_nom, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
+use bevy_mod_yarn::parser::interpolated_value;
+
+use crate::{parser::{title, yarn_commands, identifier, tag_identifier, variable_identifier, statement_dialogue, parse_params, yarn_conditionals, header_tags, attributes, header, parse_yarn_nodes, statement_base, statement_choice, body::{self, display_dialogue_tree}}};
 
 fn main() {
-    println!("title {:?}",title("title: Start\n"));
+    /*println!("title {:?}",title("title: Start\n"));
     println!("title {:?}",title("title: Other_node\n"));
     println!("title {:?}",title("   title   :   Other_node\n"));
     println!("title {:?}",title(" title: Other_node   \n"));
@@ -98,7 +99,7 @@ position: 567,-265
     println!("yarn_conditionals {:?}", yarn_conditionals("<<if$gold_amount < 10>>Baker: Well, you can't afford one!<<endif>>")); // INVALID
     println!("yarn_conditionals {:?}", yarn_conditionals("<<if $gold_amount < 10 >> Baker: Well, you can't afford one! <<endif>>"));
     println!("yarn_conditionals {:?}", yarn_conditionals("<<if $gold_amount < 10 >> Baker: Well, you can't afford one! <<else>> Baker: Here you go!  <<endif>>"));
-
+    */
     // simple line with character
     /* 
     assert_eq!(
@@ -147,26 +148,6 @@ position: 567,-265
     df
     "));*/
 
-
-    println!("parse_all_yeah {:?}", parse_all_yeah( "-> block1_choiceA
-    fg
-    -> block1_choiceB
-    bar
-
-    -> block2_choiceA
-    dfs
-    df
-    qsdqsd
-
-    -> block3_choiceA
-    -> block3_choiceB
-        sdfdsf
-        sdf
-    -> block3_choiceC
-    "));
-
-
-
     // println!("parse_bar {:?}",parse_bar("") );
    
    let foobazbar = "Lamik: Hi there !
@@ -209,17 +190,86 @@ position: 567,-265
 
     ";
 
-   /*if let Ok((_, root)) = body(foobazbar) {
-    
-    }else {
-        println!("failed to parse");
-    }*/
 
-    let file_path = "./assets/minimal.yarn"; // minimal.yarn barebones.yarn
+
+    /* 
+        different cases for nesting
+    // basic_eof
+    A: how are you
+    -> B: fine
+    -> B: not ok
+    EOF
+
+    basic_blank_line
+    A: how are you
+    -> B: fine
+    -> B: not ok
+    BLANK_LINE
+    EOF
+
+    // basic_eof + 
+    A: how are you
+    -> B: fine
+       A: cool
+    -> B: not ok
+       A: oh no
+    EOF
+
+    basic_blank_line +
+    A: how are you
+    -> B: fine
+       A: cool
+    -> B: not ok
+       A: oh no
+    BLANK_LINE
+    EOF
+
+    // dedent_eof 
+    A: how are you
+    -> B: fine
+    A: unrelated // dedent: ends the choice above
+    -> B: another choice
+       A: oh no
+    EOF
+
+    // multi_indent_eof 
+    A: how are you
+    -> B: fine
+        -> B: a layer
+            -> B: another layer // here we would have pop the state & close options until we are back at level 0
+    EOF
+
+
+    */
+    println!("interpolated {:?}", interpolated_value("you now have {$coins},  congratulations !"));
+
+    let file_path = "./assets/micro.yarn"; // simple, micro minimal.yarn barebones.yarn
 
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
-    let parsed = parse_yarn_nodes_nom(&contents);
+    let parsed = parse_yarn_nodes(&contents);
+    for (_node_name, node) in parsed.iter() {
+        println!("NODE({}):", node.title);
+        println!("  Statements tree");
+        display_dialogue_tree(&node.branch, 1);
+    }
+
+    let file_path = "./assets/other.yarn"; // simple, micro minimal.yarn barebones.yarn
+    println!("indentation return");
+    let contents = fs::read_to_string(file_path)
+        .expect("Should have been able to read the file");
+    let parsed = parse_yarn_nodes(&contents);
+    for (_node_name, node) in parsed.iter() {
+        println!("NODE({}):", node.title);
+        println!("  Statements tree");
+        display_dialogue_tree(&node.branch, 1);
+    }
+
+    let file_path = "./assets/complex.yarn"; // simple, micro minimal.yarn barebones.yarn
+    println!("COMPLEX");
+    let contents = fs::read_to_string(file_path)
+        .expect("Should have been able to read the file");
+    let parsed = parse_yarn_nodes(&contents);
     for (_node_name, node) in parsed.iter() {
         println!("NODE({}):", node.title);
         println!("  Statements tree");
@@ -235,13 +285,3 @@ position: 567,-265
 
 
 
-
-/* 
-// TODO: move to tests
-#[test]
-fn test_integer() {
-    assert_eq!(yarn_commands("<<stop>>"), Ok(("", vec!["stop"])));
-    assert_eq!(yarn_commands("<<say hello>>"), Ok(("", vec!["say", "hello"])));
-    assert_eq!(yarn_commands("<<jump Other_node>>"), Ok(("", vec!["jump", "Other_node"])));
-}
-*/
