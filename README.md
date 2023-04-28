@@ -1,6 +1,6 @@
 # Bevy mod yarn
 
-<img src="./examples/bubbles/bubbles.gif"  width="50%" height="50%">
+<img src="./examples/bubbles/bubbles.gif"  width="70%" height="70%">
 
 Parser + helpers for the [YarnSpinner](https://github.com/YarnSpinnerTool/YarnSpinner) dialogue file format for the [Bevy Engine](https://github.com/bevyengine/bevy)
 To be able to create narrative games and more in Bevy !
