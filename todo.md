@@ -5,7 +5,7 @@
     possibly plugins ? (ie to split parsing from runner )
 - [x] rename parse_yarn_nodes_nom to something more adapted & nicer
 - [x] for choices, perhaps return the current choice index together with the list of choices from get_current_choices
-- error handling if start node name is not found
+- [x] error handling if start node name is not found
 - [x] fix issue with nested choices in runner
 - [ ] add examples
     - [x] two characters (player + 1)
@@ -15,8 +15,10 @@
 
     - [x] first two examples should use camera2D
     - [x] examples should provide at least some command use
+- [x] cleanup warnings
 - [ ] add basic useage docs
-- [ ] cleanup warnings
+- [ ] add captures of the examples
+- [ ] remove use as resource examples in docstrings for now
 
 ## General
 

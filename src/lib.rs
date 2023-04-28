@@ -9,8 +9,6 @@ mod yarn_loader;
 use bevy::prelude::{
     App,Plugin, AddAsset
 };
-use bevy::ecs::system::Resource;
-
 pub use yarn_asset::YarnAsset;
 pub use yarn_loader::YarnAssetLoader;
 pub use evaluator::DialogueRunner;
@@ -22,39 +20,57 @@ pub use evaluator::DialogueRunner;
 /// ```
 /// # use bevy::prelude::*;
 /// # use bevy_mod_yarn::prelude::*;
+/// 
 /// # use bevy::asset::AssetPlugin;
 /// # use bevy::app::AppExit;
+/// 
 /// fn main() {
-///    let mut app = App::new();
-///    app
-///         .add_plugins(MinimalPlugins)
-///         .add_plugin(AssetPlugin::default())
+///    App::new()
+///         .add_plugins(DefaultPlugins)
 ///         .add_plugin(YarnPlugin)
-///         .add_system(start_dialogue.on_startup());
-///    app.run();
+///         .init_resource::<State>()
+/// 
+///         .add_startup_system(setup)
+///         .add_system(dialogue_init)
+///         .run();
 /// }
-///
-/// fn start_dialogue(asset_server: Res<AssetServer>, dialogue: Res<DialogueRunner>) {
-///     dialogue.start(asset_server.load("hello_world.yarn"));
+/// // only needed for manual loading, not when using tools like [bevy_asset_loader](https://github.com/NiklasEi/bevy_asset_loader)
+/// #[derive(Resource, Default)]
+/// struct State {
+///   handle: Handle<YarnAsset>,
+///   done: bool
+/// }
+/// 
+/// fn setup(
+/// mut state: ResMut<State>, 
+/// asset_server: Res<AssetServer>, 
+///  mut commands: bevy::prelude::Commands
+/// ){
+/// 
+/// // load the yarn dialogue file
+/// state.handle = asset_server.load("dialogues/single_node_simple.yarn");
+/// 
+/// // any other bevy setup
+/// }
+/// // spawn a dialogueRunner
+/// fn dialogue_init(mut state: ResMut<State>, dialogues: Res<Assets<YarnAsset>>, mut commands: bevy::prelude::Commands) {
+///    if let Some(dialogues)= dialogues.get(&state.handle) {
+///      if !state.done {
+///       commands.spawn( DialogueRunner::new(dialogues.clone(), "Start"));
+///       state.done = true;
+///      }
+///    }
 /// }
 ///
 /// ```
+
 #[derive(Default)]
 pub struct YarnPlugin;
 impl Plugin for YarnPlugin {
   fn build(&self, app: &mut App) {
       app
-        // .register_type::<DialogueRunner>()
         .add_asset::<YarnAsset>()
         .init_asset_loader::<YarnAssetLoader>()
-
-
-        /* .add_system_set(ConditionSet::new()
-          .run_in_state(AppState::GameRunning)
-          .with_system(focusing)
-          .into()
-        )  */
-
       ;
   }
 }
@@ -80,18 +96,6 @@ pub mod prelude {
     pub use crate::{YarnPlugin};
 
 }
-
-
-
-/// The default yarn channel
-///
-/// Alias for the [`AudioChannel<MainTrack>`] resource. Use it to play and control sound on the main track.
-/// You can add your own channels via [`add_audio_channel`](AudioApp::add_audio_channel).
-// pub type DialogueRunner = DialogueRunner<MainYarn>;
-
-#[derive(Resource)]
-pub struct MainYarn;
-
 
 #[doc = include_str!("../README.md")]
 #[cfg(doctest)]

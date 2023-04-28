@@ -10,7 +10,7 @@ https://github.com/rust-bakery/nom/issues/902
 //https://docs.rs/nom/latest/nom/sequence/fn.delimited.html
 
 
-- how the hell do we implement expression parsing & evaluation in rust in a compiled language ???
+- how do we implement expression parsing & evaluation in rust ? 
     https://github.com/jdm/yarn-spool/commit/4583c11aaf8f9b7286d53e315f6672c17ee0b9d6
     https://github.com/rekka/meval-rs
 
@@ -121,4 +121,4 @@ we could have
     ])
 )}```
 
-// then again, meh, a lot less clear
+// then again, meh, a lot less clear, and this is for internal use only
