@@ -1,16 +1,13 @@
 
 use nom::{
-    bytes::complete::{tag, is_not, take_till, take_until, take_while_m_n, take_while},
+    bytes::complete::{tag, take_until},
     branch::alt,
-    error::ParseError,
-    
+    // error::ParseError,
     IResult, 
-    multi::{separated_list1, many0_count, many0, separated_list0, many1, many_till, count}, 
-    character::complete::{newline, alphanumeric0, anychar, alpha1, alphanumeric1, multispace0, space0, digit0, one_of, char, line_ending, not_line_ending}, 
-    sequence::{delimited, preceded, terminated, pair, separated_pair, tuple }, 
-    combinator::{recognize, opt, not, eof, map}, 
-    InputTakeAtPosition,
-    number::complete::{float, recognize_float}
+    multi::{ many0, many1, many_till }, 
+    character::complete::{ space0, not_line_ending}, 
+    sequence::{delimited, terminated, tuple }, 
+    combinator::{recognize, opt, eof, map}, 
 };
 
 use super::{YarnCommand, Statements, Dialogue, Choice, Branch, variable_identifier, Commands};
@@ -49,9 +46,9 @@ pub fn statement_command(input: &str) -> IResult<&str, Statements> {
 
 
 pub fn statement_choice(input: &str) -> IResult<&str, Statements> { //(Statements, usize)
-    let (input, indentations)= take_until("->")(input)?;     //tuple(( many0_count(space0), tag("->") ))(input)?;
+    let (input, _indentations)= take_until("->")(input)?;     //tuple(( many0_count(space0), tag("->") ))(input)?;
     let (input, _) = tag("->")(input)?;
-    let (input, rest) = till_end(input)?;
+    let (_input, rest) = till_end(input)?;
     let (input, dialogue) = statement_dialogue(rest)?;
     let choice = Statements::ChoiceBranch(Branch{ statements: vec![dialogue], ..Default::default() });
     Ok(( input, choice))
@@ -117,7 +114,7 @@ pub fn attributes(input: &str) -> IResult<&str, (String, Vec<&str>)> {
     let (input , inside) = take_until("[/")(input)?;
     withouth_attributes.push(inside);
 
-    let (input, closing_attribute_name) = delimited(tag("[/"), identifier, tag("]"))(input)?;
+    let (input, _closing_attribute_name) = delimited(tag("[/"), identifier, tag("]"))(input)?;
     // println!("ATTRIBUTES end input {}, bla {}", input, closing_attribute_name);
     withouth_attributes.push(input);
     // TODO: detect un matching attribute names & throw an error ?
@@ -134,7 +131,7 @@ pub fn attributes(input: &str) -> IResult<&str, (String, Vec<&str>)> {
 /// we want to return the text BEFORE and AFTER the tagged part
 /// possible solutions: peek, success, consume
 /// alternate: line terminated((alt("{", "<<<",  ) ))
-pub fn interpolated_value(input: &str) -> IResult<&str, &str> {
+pub fn _interpolated_value(input: &str) -> IResult<&str, &str> {
     delimited(tag("{"), variable_identifier, tag("}"))(input)
 }
 
@@ -160,13 +157,11 @@ pub fn statement_dialogue(input: &str) -> IResult<&str, Statements> {
     Ok((input, result))
 }
 
-
 // fixme: not sure 
 fn statement_empty_line(input: &str) -> IResult<&str, Statements> {
     let (input, _) = empty_line(input)?;
     Ok((input, Statements::Empty))
 }
-
 
 pub fn hashtags(input: &str) -> IResult<&str, Vec<&str>> {
     many0(spacey(tag_identifier))(input)
@@ -177,12 +172,10 @@ pub fn get_indentation(input: &str) -> IResult<&str, usize> {
     // FIXME: damn, whitespace counting needs to include the choice's ->
    
     if input.contains("->") {
-        let (bli, (pre_space, tag, post_space, _)) = tuple(( space0, tag("->"),  space0, not_line_ending ))(input)?;
-        //println!("WHITESPACE TEST2: {} {:?}", bli, (pre_space.len(), tag.len(), post_space.len()));
+        let (_, (pre_space, tag, post_space, _)) = tuple(( space0, tag("->"),  space0, not_line_ending ))(input)?;
         identation = pre_space.len() + tag.len() + post_space.len();
     }else {
-        let (_, (white_spaces, rest_of_line)) = tuple(( space0, not_line_ending))(input)?;
-        //println!("WHITESPACE TEST: {} {:?}", white_spaces.len(), rest_of_line);
+        let (_, (white_spaces, _rest_of_line)) = tuple(( space0, not_line_ending))(input)?;
         identation = white_spaces.len();
 
     }
@@ -216,36 +209,7 @@ pub fn statement_base(input: &str) -> IResult<&str, Vec<(&str, Vec<&str>, usize)
     many1(statement_base_line)(input)
 }
 
-pub fn state_pop(mut stack: Vec<Branch>, mut current_branch : Branch, mut current_branches: Vec<Branch>) -> Branch{
-    current_branches.push(current_branch.clone());
 
-    if stack.len() > 0 {
-        current_branch = stack.pop().unwrap();
-        if current_branches.len() > 0 {
-            current_branch.statements.push( // need to be pushed to the parent branch, so that is why we pop() first
-                Statements::Choice(Choice { branches: current_branches.clone() , ..Default::default()} )
-            );
-        }   
-    }
-    println!("nesting level {}", stack.len());
-
-    current_branches = vec![];
-    
-    current_branch
-}
-
-/* 
-pub fn get_current_branch(mut choices_stack: Vec<Choice>, current_branch: Branch) -> Branch{
-
-    if choices_stack.len()> 0 {
-       return *choices_stack.last_mut()
-            .expect("we should always have one item in the stack here")
-            .branches.last_mut()
-                    .expect("we always have at least one branch")
-    }else {
-        return current_branch
-    }
-}*/
 
 /*
 Alternative impl
@@ -253,7 +217,7 @@ do not directly add statements, go through an itermediary data structure
 - clear (blank_line /eof) => pops all items until it reaches 0
 - add (indentlevel(ie choice stack level), statement )*/
 enum HelperOps{
-    Add((usize, Statements)),
+    // Add((usize, Statements)),
     Clear,
     None
 }
@@ -264,22 +228,18 @@ enum HelperOps{
 
 /// wraps all the rest
 pub fn body(input: &str) -> IResult<&str, Branch> {
-    let (input, lines) = statement_base(input)?; // TODO: use nom's map
+    let (input, lines) = statement_base(input)?; // TODO: use nom's map ?
 
     let mut root_branch : Branch = Branch { statements: vec![], ..Default::default() };  // this is the root branch after the end of the parsing
     let mut choices_stack: Vec<Choice> = vec![];
-    let mut current_branch:& mut Branch;
-    current_branch = &mut root_branch;
-    // current_branch.statements.push(Statements::Empty);
+    //let mut current_branch:& mut Branch;
+    // current_branch = &mut root_branch;
+    
     // remember choice "groups" are delimited by : 
     // - empty white line
     // - a different indentation 
-
     let mut previous_indentation:usize = 0;
     let mut previous_choice_indentation:usize = 0;
-
-    let mut nesting_level= 0;
-
     let mut helper = HelperOps::None;
 
     for (index, (line, tags, indentation)) in lines.iter().enumerate() {
@@ -292,23 +252,18 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
             statement_dialogue_what,
         )
         )(line)?;
-        let tags: Vec<String> = tags.clone().iter().map(|x|x.to_string()).collect();
+        let _tags: Vec<String> = tags.clone().iter().map(|x|x.to_string()).collect(); // TODO
         let indentation = indentation.clone();
-        //println!("line {:?}", statement);
 
-        //println!("indentation {} {}", indentation, previous_choice_indentation);
 
         match statement.clone(){
-            Statements::ChoiceBranch(mut branch) => {
-                // let clone = branch.clone();
-                // current_branch = &mut branch;
+            Statements::ChoiceBranch(branch) => {
                 // IF non nested, the branch is on the same level as previous branches
                 if indentation > previous_choice_indentation {
-                    println!("higher level, we need to nest !");
+                    // println!("higher level, we need to nest !");
                     choices_stack.push(Choice { branches: vec![branch], ..Default::default() });
                 }else if indentation == previous_choice_indentation {
-                    println!("same level , add another branch");
-                    //println!("choices stack {:?}", choices_stack);
+                    // println!("same level , add another branch");
                     // push the previous choice branch to the list of branches in the choice
                     choices_stack.last_mut().expect("we should always have one item in the stack here").branches.push(branch);
                   
@@ -335,7 +290,6 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
             _=> {
                 // we push everything else to the current branch
                 if indentation < previous_indentation {
-                    println!("poping");
                     previous_choice_indentation = indentation;
                     if choices_stack.len()> 0 {
                         let choice = choices_stack.pop().unwrap();
@@ -373,7 +327,6 @@ pub fn body(input: &str) -> IResult<&str, Branch> {
                     let mut child = choices_stack.pop().unwrap();
                     if choices_stack.len()> 0 {
                         while let Some(mut parent_choice) = choices_stack.pop() {
-                            println!("in loop");
                             if choices_stack.len()> 0 {
                                 parent_choice.branches.last_mut().unwrap().statements.push(Statements::Choice(child.clone()));
                                 child = parent_choice;

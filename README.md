@@ -51,9 +51,6 @@ I am aiming to be able to parse as much of the Yarn Syntax as possible:
 - [x] tags parsing
 - [ ] tags available inside statements 
 
-- [ ] add testing
-- [ ] add examples
-- [ ] add docs
 
 I will put it on crates.io once I feel it is useable enough.
 

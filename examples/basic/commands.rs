@@ -139,6 +139,7 @@ fn dialogue_commands(
                     }
                     _ => {}
                 }
+                
                 runner.next_entry();
             }
             _ => {

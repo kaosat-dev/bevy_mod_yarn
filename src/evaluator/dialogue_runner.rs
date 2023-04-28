@@ -1,7 +1,6 @@
 use bevy::ecs::component::Component;
 // use bevy::ecs::system::Resource;
-use bevy::asset::Handle;
-use bevy::log::error;
+// use bevy::asset::Handle;
 use crate::prelude::{Branch, Statements, Dialogue, Commands, YarnAsset};
 
 
@@ -104,8 +103,8 @@ impl DialogueRunner {
             // FIXME: not super clean way to pop until empty/ back in a normal flow
             while self.current_statement_index <=  self.current_branch.statements.len() &&  self.branches_stack.len() > 0  {
                 self.current_branch = self.branches_stack.pop().unwrap();
-                let (choice_index, statement_index) = self.indices_stack.pop().unwrap();
-                self.current_choice_index = 0; // reset choice to first choice
+                let (_choice_index, statement_index) = self.indices_stack.pop().unwrap();
+                self.current_choice_index = 0; // reset choice to first choice // FIXME: should it use the choice index above ?
                 self.current_statement_index = statement_index + 1 ; // FIXME: check if this is a valid statement !!
             }
         }

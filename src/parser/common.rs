@@ -1,14 +1,13 @@
 use nom::{
-    bytes::complete::{tag, is_not, take_till, take_until},
+    bytes::complete::{tag, is_not},
     branch::alt,
     error::ParseError,
     
-    IResult, multi::{separated_list1, many0_count, many0, separated_list0, many1}, 
-    character::complete::{newline, alphanumeric0, anychar, alpha1, alphanumeric1, multispace0, space0, digit0, one_of, char}, 
-    sequence::{delimited, preceded, terminated, pair, separated_pair, tuple, }, 
-    combinator::{recognize, opt, not}, 
-    InputTakeAtPosition,
-    number::complete::{float, recognize_float}
+    IResult, multi::{separated_list1, many0_count}, 
+    character::complete::{ alpha1, alphanumeric1, space0}, 
+    sequence::{delimited, pair }, 
+    combinator::{recognize,}, 
+    number::complete::{recognize_float}
 };
 
 
@@ -79,16 +78,6 @@ pub fn any_non_whitespace(input: &str) -> IResult<&str, &str> {
     is_not(" ")(input)
     // not(space0)(input)
 }
-
-//    anychar(input)
-fn anything(input: &str) -> IResult<&str, &str> {
-    println!("BLA {}", input);
-Ok((input, ""))
-}
-
-
-
-
 
 // TODO move to utils
 /* 
