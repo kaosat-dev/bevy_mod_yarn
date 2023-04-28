@@ -1,5 +1,7 @@
 # Bevy mod yarn
 
+<img src="./examples/bubbles/bubbles.gif"  width="50%" height="50%">
+
 Parser + helpers for the [YarnSpinner](https://github.com/YarnSpinnerTool/YarnSpinner) dialogue file format for the [Bevy Engine](https://github.com/bevyengine/bevy)
 To be able to create narrative games and more in Bevy !
 
@@ -168,8 +170,8 @@ I will put it on crates.io once I feel it is useable enough.
 
 Dual-licensed under either of
 
-- Apache License, Version 2.0, ([LICENSE-APACHE](/LICENSE-APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
-- MIT license ([LICENSE-MIT](/LICENSE-MIT) or https://opensource.org/licenses/MIT)
+- Apache License, Version 2.0, ([LICENSE-APACHE](/LICENSE_APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](/LICENSE_MIT) or https://opensource.org/licenses/MIT)
 
 at your option.
 
