@@ -87,6 +87,7 @@ fn setup(
             },
         )
         .with_style(Style {
+            size: Size::width(Val::Px(250.0)),
             position_type: PositionType::Absolute,
             position: UiRect {
                 bottom: Val::Px( 30.0),
