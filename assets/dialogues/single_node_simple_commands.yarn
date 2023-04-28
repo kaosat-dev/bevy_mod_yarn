@@ -1,0 +1,11 @@
+title: Start
+---
+it was a beautiful day , said nobody
+<<enter scene1>>
+Lamik: hi !
+Dona: good morning , how are you ?
+-> Lamik: are you asking me ?
+   Dona: yes
+-> Lamik: fine !
+   Dona: good to hear
+===

@@ -26,7 +26,8 @@ fn setup(
     asset_server: Res<AssetServer>, 
     mut commands: bevy::prelude::Commands
 ) {
-    state.handle = asset_server.load("complex.yarn");
+    // load the yarn dialogue file
+    state.handle = asset_server.load("dialogues/single_node_simple_commands.yarn");
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(0.0, 0.0, 5.0).looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
         ..default()
@@ -94,7 +95,6 @@ fn dialogue_display(
     if let Ok(runner) = runners.get_single() {
         match runner.current_statement() {
             Statements::Dialogue(dialogue) => {
-                // println!("{:?}: {:?}", dialogue.who, dialogue.what);
                 text.push_str(&format!("{:?}: {:?}\n", dialogue.who, dialogue.what));
             }
             Statements::Choice(_) => {
@@ -108,7 +108,7 @@ fn dialogue_display(
                 }
             }
             Statements::Exit => {
-                text.push_str("end of the node!");
+                text.push_str("end of the dialogue!");
             }
             _ => {
                 

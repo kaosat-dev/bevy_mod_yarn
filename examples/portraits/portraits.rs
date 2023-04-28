@@ -55,7 +55,7 @@ fn setup(
     mut commands: bevy::prelude::Commands
 ) {
     // load the yarn file
-    state.handle = asset_server.load("two_nodes_jump_nested_choices.yarn");
+    state.handle = asset_server.load("dialogues/two_nodes_jump_nested_choices.yarn");
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(0.0, 0.0, 5.0).looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
         ..default()
@@ -133,28 +133,28 @@ fn setup(
                         size: Size::new(Val::Px(64.0), Val::Px(64.0)),
                         ..default()
                     },
-                    image: asset_server.load("portrait0.png").into(),
+                    image: asset_server.load("textures/portrait0.png").into(),
                     ..default()
                 })
                 .with_children(|parent| {
                     // alt text
                     parent
-                        .spawn(TextBundle::from_section("Bevy logo", TextStyle::default()));
+                        .spawn(TextBundle::from_section("portraits", TextStyle::default()));
                 });
         });
 
     // spawn our characters
     commands.spawn((
         CharacterName("Lamik".to_string()),
-        CharacterPortraitPath("portrait1.png".to_string()),
-        CharacterPortrait(asset_server.load("portrait1.png").into())
+        CharacterPortraitPath("textures/portrait1.png".to_string()),
+        CharacterPortrait(asset_server.load("textures/portrait1.png").into())
         
     ));
 
     commands.spawn((
         CharacterName("Dona".to_string()),
-        CharacterPortraitPath("portrait2.png".to_string()),
-        CharacterPortrait(asset_server.load("portrait2.png").into())
+        CharacterPortraitPath("textures/portrait2.png".to_string()),
+        CharacterPortrait(asset_server.load("textures/portrait2.png").into())
     ));
 }
 

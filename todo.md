@@ -13,6 +13,7 @@
         - very simple display/ui
     - [x] rpg style changing portraits
     - [ ] speech bubbles, multiple characters (3d)
+    - [ ] examples should provide at least some command use
 
 - [ ] add basic useage docs
 - [ ] auto linefeed ? (ui specific)
@@ -72,5 +73,10 @@
         - [ ] rename next_entry() to next()
         - [ ] next_entry() should return an Option<Statement> perhaps ? (closer to an iterator, error handling etc)
     - [ ] add support for multiple yarn files in a managed way : see https://docs.yarnspinner.dev/using-yarnspinner-with-unity/importing-yarn-files/yarn-projects
-- [ ] integrate with bevy 0.10.1
 
+- [x] bevy 0.10.1 support
+- [ ] bevy 0.11 support on bevy_main branch (low priority, only if time allows)
+
+- [ ] add testing
+- [ ] add examples
+- [ ] add docs
