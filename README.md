@@ -12,8 +12,7 @@ To be able to create narrative games and more in Bevy !
 
 This projets is still in the early stages, but it is already useable as it is for some basic Yarn scripts.
 
-Since I am using it myself and will be relying on it heavilly (yeah for dogfooding), 
-
+Since I am using it myself and will be relying on it heavilly for some of my projects (yeah for dogfooding :) ), 
 I am aiming to be able to parse & support as much of the Yarn Syntax as possible.
 
 
