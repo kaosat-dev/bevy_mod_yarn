@@ -11,15 +11,14 @@ fn main() {
             }),
             ..default()
         }))
-
-        .add_plugin(YarnPlugin)
+        .add_plugins(YarnPlugin)
         .init_resource::<State>()
-
-        .add_startup_system(setup)
-        .add_system(dialogue_init)
-        .add_system(dialogue_navigation)
-        .add_system(dialogue_display)
-
+        .add_systems(Startup, setup)
+        .add_systems(Update, (
+            dialogue_init,
+            dialogue_navigation,
+            dialogue_display,
+        ))
         .run();
 }
 
@@ -77,11 +76,8 @@ fn setup(
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            position: UiRect {
-                bottom: Val::Px( 30.0),
-                left: Val::Px(80.0),
-                ..default()
-            },
+            bottom: Val::Px( 30.0),
+            left: Val::Px(80.0),
             ..default()
         }),
         DialogueTextMarker
@@ -100,11 +96,8 @@ fn setup(
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            position: UiRect {
-                bottom: Val::Px( 60.0),
-                left: Val::Px(80.0),
-                ..default()
-            },
+            bottom: Val::Px( 60.0),
+            left: Val::Px(80.0),
             ..default()
         }),
         DialogueNameMarker
@@ -115,11 +108,8 @@ fn setup(
         .spawn(NodeBundle {
             style: Style {
                 position_type: PositionType::Absolute,
-                position: UiRect {
                 bottom: Val::Px(10.0),
                 left: Val::Px(10.0),
-                ..default()
-            },
                 ..default()
             },
             ..default()
@@ -129,7 +119,7 @@ fn setup(
             parent
                 .spawn(ImageBundle {
                     style: Style {
-                        size: Size::new(Val::Px(64.0), Val::Px(64.0)),
+                        //FIXME: size: Size::new(Val::Px(64.0), Val::Px(64.0)),
                         ..default()
                     },
                     image: asset_server.load("textures/portrait0.png").into(),

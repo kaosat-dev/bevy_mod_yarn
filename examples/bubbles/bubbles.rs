@@ -11,15 +11,14 @@ fn main() {
             }),
             ..default()
         }))
-
-        .add_plugin(YarnPlugin)
+        .add_plugins(YarnPlugin)
         .init_resource::<State>()
-
-        .add_startup_system(setup)
-        .add_system(dialogue_init)
-        .add_system(dialogue_navigation)
-        .add_system(dialogue_display)
-
+        .add_systems(Startup, setup)
+        .add_systems(Update, (
+            dialogue_init,
+            dialogue_navigation,
+            dialogue_display,
+        ))
         .run();
 }
 
@@ -87,13 +86,10 @@ fn setup(
             },
         )
         .with_style(Style {
-            size: Size::width(Val::Px(250.0)),
+            // size: Size::width(Val::Px(250.0)),
             position_type: PositionType::Absolute,
-            position: UiRect {
-                bottom: Val::Px( 30.0),
-                left: Val::Px(80.0),
-                ..default()
-            },
+            bottom: Val::Px( 30.0),
+            left: Val::Px(80.0),           
             ..default()
         }),
         DialogueTextMarker
@@ -180,7 +176,7 @@ fn dialogue_navigation(
 
 fn dialogue_display(
     runners: Query<&DialogueRunner>,
-    mut text: Query<(&mut Text, &mut Style, &CalculatedSize) ,(With<DialogueTextMarker>, Without<DialogueNameMarker>) >,
+    mut text: Query<(&mut Text, &mut Style) ,(With<DialogueTextMarker>, Without<DialogueNameMarker>) >, //  &CalculatedSize
     characters: Query<(&CharacterName, &GlobalTransform, &Aabb)>,
 
     // for projection & placing bubble above characters
@@ -193,7 +189,8 @@ fn dialogue_display(
     // text.push_str("------------------------------\n");
 
     let mut bubble_style = text_data.1;
-    let bubble_size = text_data.2.size;
+    let bubble_size = Vec2::new(text_data.1.width, text_data.1.height);
+    // FIXME: text_data.2.size;
 
     let window = windows.single();
     
