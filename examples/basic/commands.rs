@@ -3,7 +3,6 @@ use bevy_mod_yarn::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
         .add_plugins((
             DefaultPlugins, 
             YarnPlugin
@@ -121,10 +120,16 @@ fn dialogue_display(
     }
 }
 
+
+/// Marker component for our music entity
+#[derive(Component)]
+struct AudioTag;
+
 fn dialogue_commands(
     mut runners: Query<&mut DialogueRunner>,
     asset_server: Res<AssetServer>, 
-    audio: Res<Audio>)
+    mut commands: bevy::prelude::Commands,
+)
 {
 
     if let Ok(mut runner) = runners.get_single_mut() {
@@ -135,8 +140,18 @@ fn dialogue_commands(
                     "play_audio" => {
                         let audio_path = format!("sounds/{}.ogg", command.params);
                         // println!("audio {}", audio_path);
-                        let music = asset_server.load(audio_path);
-                        audio.play(music);
+                        //let music = asset_server.load(audio_path);
+                        // audio.play(music);
+
+
+                        commands.spawn((
+                            AudioBundle {
+                                source: asset_server.load(audio_path),
+                                settings: PlaybackSettings::DESPAWN,
+                            },
+                            AudioTag,
+                        ));
+
                     }
                     _ => {}
                 }

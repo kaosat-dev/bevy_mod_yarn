@@ -86,15 +86,15 @@ fn setup(
             },
         )
         .with_style(Style {
-            // size: Size::width(Val::Px(250.0)),
             position_type: PositionType::Absolute,
             bottom: Val::Px( 30.0),
-            left: Val::Px(80.0),           
+            left: Val::Px(80.0),      
+            max_width: Val::Px(300.0),     
+            max_height: Val::Px(40.0),
             ..default()
         }),
         DialogueTextMarker
-        )
-    );
+    ));
 
 
     // character stand ins in the 3d world
@@ -176,7 +176,7 @@ fn dialogue_navigation(
 
 fn dialogue_display(
     runners: Query<&DialogueRunner>,
-    mut text: Query<(&mut Text, &mut Style) ,(With<DialogueTextMarker>, Without<DialogueNameMarker>) >, //  &CalculatedSize
+    mut text: Query<(&mut Text, &mut Style, &Node) ,(With<DialogueTextMarker>, Without<DialogueNameMarker>) >, //  &CalculatedSize
     characters: Query<(&CharacterName, &GlobalTransform, &Aabb)>,
 
     // for projection & placing bubble above characters
@@ -189,8 +189,7 @@ fn dialogue_display(
     // text.push_str("------------------------------\n");
 
     let mut bubble_style = text_data.1;
-    let bubble_size = Vec2::new(text_data.1.width, text_data.1.height);
-    // FIXME: text_data.2.size;
+    let bubble_size = text_data.2.size();
 
     let window = windows.single();
     
@@ -206,13 +205,8 @@ fn dialogue_display(
                 // FIXME: very inneficient, but does the job, perhaps switch to for each to break out early
                 for (name, global_transform, aabb) in characters.iter() {
                     if name.0 == dialogue.who {       
-                       // println!("Char data {:?} {:?}", global_transform, aabb);
-                       // println!("----");
-                        // println!("text data  {:?} {:?}", bubble_style, bubble_size);
                         // we want to position bubbles ABOVE meshes, sadly the builtin Aabb component does not seem to have correct data,
                         place_bubble(aabb, global_transform, camera, camera_global_transform, window, &bubble_size, &mut bubble_style);
-                        // portrait.texture = portrait_img.0.clone();
-                        // name_display.push_str(&name.0);
                     }
                 }
             }
@@ -234,7 +228,6 @@ fn dialogue_display(
                     for (name, global_transform, aabb) in characters.iter() {
                         if name.0 == dialogue.who {                 
                             place_bubble(aabb, global_transform, camera, camera_global_transform, window, &bubble_size, &mut bubble_style);
-       
                             // portrait.texture = portrait_img.0.clone();
                             // name_display.push_str(&name.0);
                         }
@@ -272,8 +265,8 @@ fn place_bubble(
             let mapped_y = coords.y * window.height() * 0.5;
             let mid_x = window.width()/2.0 - width;
             let mid_y = window.height()/2.0 - height;
-            bubble_style.position.left =   Val::Px( mid_x + mapped_x );
-            bubble_style.position.top = Val::Px(mid_y - mapped_y - 50.);
+            bubble_style.left =   Val::Px( mid_x + mapped_x );
+            bubble_style.top = Val::Px(mid_y - mapped_y - 50.);
             bubble_style.display=Display::Flex; // since it was hidden, display it again (avoids text position flicker)
         }
         None => {

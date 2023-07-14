@@ -119,7 +119,8 @@ fn setup(
             parent
                 .spawn(ImageBundle {
                     style: Style {
-                        //FIXME: size: Size::new(Val::Px(64.0), Val::Px(64.0)),
+                        min_width: Val::Px(64.),
+                        min_height: Val::Px(64.),
                         ..default()
                     },
                     image: asset_server.load("textures/portrait0.png").into(),
