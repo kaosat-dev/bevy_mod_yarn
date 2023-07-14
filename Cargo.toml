@@ -7,10 +7,10 @@ edition = "2021"
 [dependencies]
 nom = "7.1.2"
 nom-supreme = "0.8.0"
-bevy = { version = "0.10.1", default-features = false, features = ["bevy_asset"] }
+bevy = { version = "0.11", default-features = false, features = ["bevy_asset"] }
 
 [dev-dependencies]
-bevy="0.10.1"
+bevy="0.11"
 
 [[example]]
 name = "basic"

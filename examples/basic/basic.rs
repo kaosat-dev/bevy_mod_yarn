@@ -3,15 +3,17 @@ use bevy_mod_yarn::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(YarnPlugin)
+        .add_plugins((
+            DefaultPlugins, 
+            YarnPlugin
+        ))
         .init_resource::<State>()
-
-        .add_startup_system(setup)
-        .add_system(dialogue_init)
-        .add_system(dialogue_navigation)
-        .add_system(dialogue_display)
-
+        .add_systems(Startup, setup)
+        .add_systems(Update, (
+            dialogue_init,
+            dialogue_navigation,
+            dialogue_display,
+        ))
         .run();
 }
 
@@ -46,11 +48,8 @@ fn setup(
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            position: UiRect {
-                top: Val::Px(10.0),
-                left: Val::Px(10.0),
-                ..default()
-            },
+            top: Val::Px(10.0),
+            left: Val::Px(10.0),
             ..default()
         }),
     );
