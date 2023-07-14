@@ -185,8 +185,9 @@ The main branch is compatible with the latest Bevy release (0.10.1), while the b
 Compatibility of `bevy_mod_yarn` versions:
 | `bevy_mod_yarn`     | `bevy` |
 | :--                 |  :--   |
-| `0.1`               | `0.10.1` |
-| `main`              | `0.10.1` |
+| `0.2`               | `0.11` |
+| `0.1`               | `0.10` |
+| `main`              | `latest` |
 | `bevy_main`         | `main` |
 
 
