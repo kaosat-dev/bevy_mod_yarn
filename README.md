@@ -7,14 +7,13 @@
 </div>
 
 Parser + interpreter/runner for the [YarnSpinner](https://github.com/YarnSpinnerTool/YarnSpinner) dialogue file format for the [Bevy Engine](https://github.com/bevyengine/bevy)
-To be able to create narrative games and more in Bevy !
+It allows you to create branching narrative / dialogues for games , ie , Rpgs, Visual novels, adventure games, etc in Bevy !
 
 
-This projets is still in the early stages, but it is already useable as it is for some basic Yarn scripts.
+This project is still in the early stages, but it is already usable as it is for some basic Yarn scripts.
 
 Since I am using it myself and will be relying on it heavilly for some of my projects (yeah for dogfooding :) ), 
 I am aiming to be able to parse & support as much of the Yarn Syntax as possible.
-
 
 ## Usage
 
@@ -113,11 +112,11 @@ This crate provides different examples for different features/ways to use within
 
     run it with 
     
-    ```cargo run --example command```
+    ```cargo run --example commands```
 
 ### [Portraits](./examples/portraits)
 
-- a barebones "old school rpg dialogue with Character portraits" 
+- a barebones "old school rpg dialogue with Character portraits" ie changing character portraits based on who is talking in your dialogue
 
     ![demo](./examples/portraits/portraits.gif)
 
