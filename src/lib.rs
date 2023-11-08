@@ -7,7 +7,7 @@ mod yarn_loader;
 
 
 use bevy::prelude::{
-    App,Plugin, AddAsset
+    App,Plugin, AssetApp
 };
 pub use yarn_asset::YarnAsset;
 pub use yarn_loader::YarnAssetLoader;
@@ -69,8 +69,9 @@ pub struct YarnPlugin;
 impl Plugin for YarnPlugin {
   fn build(&self, app: &mut App) {
       app
-        .add_asset::<YarnAsset>()
+        .init_asset::<YarnAsset>()
         .init_asset_loader::<YarnAssetLoader>()
+        
       ;
   }
 }
