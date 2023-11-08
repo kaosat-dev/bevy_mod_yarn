@@ -1,12 +1,11 @@
 use std::str::Utf8Error;
 
 use bevy::{
-    asset::{AssetLoader, LoadContext, io::Reader, AsyncReadExt},
-    utils::{BoxedFuture, thiserror},
+    asset::{io::Reader, AssetLoader, AsyncReadExt, LoadContext},
+    utils::{thiserror, BoxedFuture},
 };
 
-use crate::{prelude::{parse_yarn_nodes, YarnAsset}};
-
+use crate::prelude::{parse_yarn_nodes, YarnAsset};
 
 #[derive(Default)]
 pub struct YarnAssetLoader;
@@ -17,10 +16,10 @@ pub struct YarnAssetLoader;
 pub enum YarnAssetLoaderError {
     ///An [IO](std::io) Error
     #[error("Could not load file: {0}")]
-    Io(#[from] std::io::Error),  
+    Io(#[from] std::io::Error),
 
     #[error("Could not load file: {0}")]
-    Utf8(#[from] Utf8Error) 
+    Utf8(#[from] Utf8Error),
 }
 
 impl AssetLoader for YarnAssetLoader {
@@ -34,14 +33,13 @@ impl AssetLoader for YarnAssetLoader {
         _settings: &'a Self::Settings,
         _load_context: &'a mut LoadContext,
     ) -> BoxedFuture<'a, Result<Self::Asset, Self::Error>> {
-
         Box::pin(async move {
             let mut bytes = Vec::new();
             reader.read_to_end(&mut bytes).await?;
             let data_str = std::str::from_utf8(&bytes)?;
             let asset = YarnAsset {
                 nodes: parse_yarn_nodes(data_str),
-                raw: data_str.into()
+                raw: data_str.into(),
             };
             Ok(asset)
         })

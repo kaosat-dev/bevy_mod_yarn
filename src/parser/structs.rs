@@ -2,14 +2,13 @@
 pub struct YarnNode {
     pub title: String,
     pub tags: Vec<String>,
-    pub branch: Branch
+    pub branch: Branch,
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Branch {
-   pub statements: Vec<Statements>,
+    pub statements: Vec<Statements>,
 }
-
 
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Dialogue {
@@ -20,7 +19,7 @@ pub struct Dialogue {
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Choice{
+pub struct Choice {
     pub branches: Vec<Branch>,
     pub tags: Vec<String>,
 }
@@ -34,15 +33,14 @@ pub struct YarnCommand {
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-pub enum Commands{
+pub enum Commands {
     Declare,
     Set,
     Jump,
     Stop,
     #[default]
-    Generic
-} 
-
+    Generic,
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Statements {
