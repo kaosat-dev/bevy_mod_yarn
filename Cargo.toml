@@ -1,16 +1,16 @@
 [package]
 name = "bevy_mod_yarn"
-version = "0.1.0"
+version = "0.3.0"
 edition = "2021"
 
 
 [dependencies]
 nom = "7.1.2"
 nom-supreme = "0.8.0"
-bevy = { version = "0.11", default-features = false, features = ["bevy_asset"] }
+bevy = { version = "0.12", default-features = false, features = ["bevy_asset"] }
 
 [dev-dependencies]
-bevy="0.11"
+bevy="0.12"
 
 [[example]]
 name = "basic"

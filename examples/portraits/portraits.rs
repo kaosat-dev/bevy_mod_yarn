@@ -3,7 +3,6 @@ use bevy_mod_yarn::prelude::*;
 
 fn main() {
     App::new()
-
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 resolution: (800., 600.).into(),
@@ -14,18 +13,17 @@ fn main() {
         .add_plugins(YarnPlugin)
         .init_resource::<State>()
         .add_systems(Startup, setup)
-        .add_systems(Update, (
-            dialogue_init,
-            dialogue_navigation,
-            dialogue_display,
-        ))
+        .add_systems(
+            Update,
+            (dialogue_init, dialogue_navigation, dialogue_display),
+        )
         .run();
 }
 
 #[derive(Resource, Default)]
 struct State {
     handle: Handle<YarnAsset>,
-    done: bool
+    done: bool,
 }
 
 #[derive(Component)]
@@ -40,7 +38,6 @@ struct CharacterPortraitPath(String);
 
 struct CharacterPortrait(Handle<Image>);
 
-
 // marker components
 #[derive(Component)]
 struct DialogueTextMarker;
@@ -49,20 +46,18 @@ struct DialogueTextMarker;
 struct DialogueNameMarker;
 
 fn setup(
-    mut state: ResMut<State>, 
-    asset_server: Res<AssetServer>, 
-    mut commands: bevy::prelude::Commands
+    mut state: ResMut<State>,
+    asset_server: Res<AssetServer>,
+    mut commands: bevy::prelude::Commands,
 ) {
     // load the yarn file
     state.handle = asset_server.load("dialogues/two_nodes_jump_nested_choices.yarn");
-
 
     // setup a simple 2d camera
     commands.spawn(Camera2dBundle {
         transform: Transform::from_xyz(0.0, 5.0, 0.0),
         ..default()
     });
-
 
     // for character dialogue text
     commands.spawn((
@@ -76,13 +71,12 @@ fn setup(
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px( 30.0),
+            bottom: Val::Px(30.0),
             left: Val::Px(80.0),
             ..default()
         }),
-        DialogueTextMarker
-        )
-    );
+        DialogueTextMarker,
+    ));
 
     // for character names
     commands.spawn((
@@ -96,13 +90,12 @@ fn setup(
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px( 60.0),
+            bottom: Val::Px(60.0),
             left: Val::Px(80.0),
             ..default()
         }),
-        DialogueNameMarker
-        )
-    );
+        DialogueNameMarker,
+    ));
 
     commands
         .spawn(NodeBundle {
@@ -128,8 +121,7 @@ fn setup(
                 })
                 .with_children(|parent| {
                     // alt text
-                    parent
-                        .spawn(TextBundle::from_section("portraits", TextStyle::default()));
+                    parent.spawn(TextBundle::from_section("portraits", TextStyle::default()));
                 });
         });
 
@@ -137,32 +129,30 @@ fn setup(
     commands.spawn((
         CharacterName("Lamik".to_string()),
         CharacterPortraitPath("textures/portrait1.png".to_string()),
-        CharacterPortrait(asset_server.load("textures/portrait1.png").into())
-        
+        CharacterPortrait(asset_server.load("textures/portrait1.png").into()),
     ));
 
     commands.spawn((
         CharacterName("Dona".to_string()),
         CharacterPortraitPath("textures/portrait2.png".to_string()),
-        CharacterPortrait(asset_server.load("textures/portrait2.png").into())
+        CharacterPortrait(asset_server.load("textures/portrait2.png").into()),
     ));
 }
 
-fn dialogue_init(mut state: ResMut<State>, dialogues: Res<Assets<YarnAsset>>, mut commands: bevy::prelude::Commands) {
-    if let Some(dialogues)= dialogues.get(&state.handle) {
+fn dialogue_init(
+    mut state: ResMut<State>,
+    dialogues: Res<Assets<YarnAsset>>,
+    mut commands: bevy::prelude::Commands,
+) {
+    if let Some(dialogues) = dialogues.get(&state.handle) {
         if !state.done {
-            commands.spawn(
-                DialogueRunner::new(dialogues.clone(), "Test_node")
-            );
+            commands.spawn(DialogueRunner::new(dialogues.clone(), "Test_node"));
             state.done = true;
         }
     }
 }
 
-fn dialogue_navigation(
-    keys: Res<Input<KeyCode>>,
-    mut runners: Query<&mut DialogueRunner>,
-) {
+fn dialogue_navigation(keys: Res<Input<KeyCode>>, mut runners: Query<&mut DialogueRunner>) {
     if let Ok(mut runner) = runners.get_single_mut() {
         if keys.just_pressed(KeyCode::Return) {
             runner.next_entry();
@@ -180,11 +170,11 @@ fn dialogue_navigation(
 
 fn dialogue_display(
     runners: Query<&DialogueRunner>,
-    mut name_display: Query<&mut Text ,(With<DialogueNameMarker>, Without<DialogueTextMarker>)>,
-    mut text: Query<&mut Text ,(With<DialogueTextMarker>, Without<DialogueNameMarker>) >,
+    mut name_display: Query<&mut Text, (With<DialogueNameMarker>, Without<DialogueTextMarker>)>,
+    mut text: Query<&mut Text, (With<DialogueTextMarker>, Without<DialogueNameMarker>)>,
     mut portrait: Query<&mut UiImage>,
-    characters: Query<(&CharacterName, &CharacterPortrait)>
-){
+    characters: Query<(&CharacterName, &CharacterPortrait)>,
+) {
     let mut text = text.single_mut();
     let text = &mut text.sections[0].value;
     *text = "".to_string();
@@ -195,7 +185,7 @@ fn dialogue_display(
     *name_display = "".to_string();
 
     let mut portrait = portrait.single_mut();
-    
+
     if let Ok(runner) = runners.get_single() {
         match runner.current_statement() {
             Statements::Dialogue(dialogue) => {
@@ -204,7 +194,7 @@ fn dialogue_display(
 
                 // FIXME: very inneficient, but does the job, perhaps switch to for each to break out early
                 for (name, portrait_img) in characters.iter() {
-                    if name.0 == dialogue.who {                        
+                    if name.0 == dialogue.who {
                         portrait.texture = portrait_img.0.clone();
                         name_display.push_str(&name.0);
                     }
@@ -212,21 +202,20 @@ fn dialogue_display(
             }
             Statements::Choice(_) => {
                 let (choices, current_choice_index) = runner.get_current_choices();
-                for (index, dialogue) in choices.iter().enumerate(){
+                for (index, dialogue) in choices.iter().enumerate() {
                     *name_display = "".to_string();
 
-                    if index == current_choice_index{
+                    if index == current_choice_index {
                         // text.push_str(&format!("--> {:?}: {:?}\n", dialogue.who, dialogue.what));
                         text.push_str(&format!("--> {}\n", dialogue.what));
-
-                    }else {
+                    } else {
                         // text.push_str(&format!("{:?}: {:?}\n", dialogue.who, dialogue.what));
                         text.push_str(&format!("{}\n", dialogue.what));
                     }
 
                     // FIXME: very inneficient, but does the job, perhaps switch to for each to break out early
                     for (name, portrait_img) in characters.iter() {
-                        if name.0 == dialogue.who {                        
+                        if name.0 == dialogue.who {
                             portrait.texture = portrait_img.0.clone();
                             name_display.push_str(&name.0);
                         }
@@ -235,10 +224,8 @@ fn dialogue_display(
             }
             Statements::Exit => {
                 text.push_str("end of the dialogue! (Exit)");
-            },
-            _ => {
-                
             }
+            _ => {}
         }
     }
 }
